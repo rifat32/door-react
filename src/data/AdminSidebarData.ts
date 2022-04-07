@@ -1,7 +1,32 @@
 import { NavInterface } from "../interfaces/AdminSideBarInterface";
 import { ROUTE_LIST } from "../RoutConstants";
 export const adminSideBarData: NavInterface[] = [
-	
+	{
+		name: "Master Setup",
+
+		list: [
+			{
+				name: "Create Wing",
+				link: "/admin/wings/create",
+				permissions: [],
+			},
+			{
+				name: "Wings",
+				link: "/admin/wings",
+				permissions: [],
+			},
+			{
+				name: "Create Bank",
+				link: "/admin/banks/create",
+				permissions: [],
+			},
+			{
+				name: "Banks",
+				link: "/admin/banks",
+				permissions: [],
+			},
+		],
+	},
 	{
 		name: "User Management",
 		list: [
@@ -27,83 +52,189 @@ export const adminSideBarData: NavInterface[] = [
 			},
 		],
 	},
-	
+
+
 	{
-		name: "Election Area",
+		name: "Product",
 		list: [
-			// {
-			// 	name: "Add Union",
-			// 	link: ROUTE_LIST.createUnions,
-			// 	permissions: [],
-			// },
 			{
-				name: "List Unions",
-				link: ROUTE_LIST.listUnions,
+				name: "Add Product",
+				link: "/admin/products/create",
 				permissions: [],
 			},
-			// {
-			// 	name: "Add Ward",
-			// 	link: ROUTE_LIST.createWards,
-			// 	permissions: [],
-			// },
 			{
-				name: "List Wards",
-				link: ROUTE_LIST.listWards,
+				name: "List Products",
+				link: "/admin/products",
 				permissions: [],
 			},
-			// {
-			// 	name: "Add Village",
-			// 	link: ROUTE_LIST.createVillage,
-			// 	permissions: [],
-			// },
+
 			{
-				name: "List Villages",
-				link: ROUTE_LIST.listVillages,
-				permissions: [],
-			},
-			// {
-			// 	name: "Add Post Office",
-			// 	link: ROUTE_LIST.createPostOfice,
-			// 	permissions: [],
-			// },
-			{
-				name: "List Post Office",
-				link: ROUTE_LIST.listPostOffice,
-				permissions: [],
-			},
-				// {
-			// 	name: "Add Ward",
-			// 	link: ROUTE_LIST.createWards,
-			// 	permissions: [],
-			// },
-			{
-				name: "List Sub District",
-				link: ROUTE_LIST.listSubDistrict,
-				permissions: [],
-			},
-			// {
-			// 	name: "Add District",
-			// 	link: ROUTE_LIST.createDistrict,
-			// 	permissions: [],
-			// },
-			{
-				name: "List Districts",
-				link: ROUTE_LIST.listDistrict,
-				permissions: [],
-			},
-			// {
-			// 	name: "Add Payment Method",
-			// 	link: ROUTE_LIST.createPaymentMethod,
-			// 	permissions: [],
-			// },
-			{
-				name: "List Payment Method",
-				link: ROUTE_LIST.listPaymentMethod,
+				name: "Category",
+				link: ROUTE_LIST.listCategory,
 				permissions: [],
 			},
 		],
 	},
+	{
+		name: "Requisition",
+		list: [
+			{
+				name: "Create Requisition",
+				link: "/admin/requisitions/create",
+				permissions: ["create requisition"],
+			},
+			{
+				name: "Requisitions",
+				link: "/admin/requisitions",
+				permissions: [
+					"approve requisition",
+					"cancel requisition",
+					"create requisition",
+				],
+			},
+			{
+				name: "Requisitions Return",
+				link: "/admin/requisitions/return",
+				permissions: ["approve requisition", "cancel requisition"],
+			},
 
-	
+			{
+				name: "Requisitions Report",
+				link: "/admin/requisitions/report",
+				permissions: ["approve requisition", "cancel requisition"],
+			},
+		],
+	},
+	{
+		name: "Parchase",
+		list: [
+			{
+				name: "Parchase Create",
+				link: "/admin/parchases/create",
+				permissions: ["create purchase"],
+			},
+			{
+				name: "Purchases",
+				link: "/admin/parchases",
+				permissions: ["purchase return", "create purchase"],
+			},
+			{
+				name: "Purchases Return",
+				link: "/admin/parchases/return",
+				permissions: ["purchase return", "cancel requisition"],
+			},
 
+			{
+				name: "Purchases Report",
+				link: "/admin/parchases/report",
+				permissions: ["purchase return"],
+			},
+		],
+	},
+	{
+		name: "Income",
+		list: [
+			{
+				name: "Revenue Create",
+				link: "/admin/revenues/create",
+				permissions: ["add revenue"],
+			},
+			{
+				name: "List Revenue",
+				link: "/admin/revenues",
+				permissions: ["approve revenue", "add revenue"],
+			},
+			{
+				name: "Credit Note Create",
+				link: "/admin/credits/create",
+				permissions: ["add credit voucher"],
+			},
+			{
+				name: "List Credit Note",
+				link: "/admin/credits",
+				permissions: ["voucher approval", "add credit voucher"],
+			},
+			{
+				name: "Income Report",
+				link: "/admin/income/report",
+				permissions: [],
+			},
+		],
+	},
+	{
+		name: "Expense",
+		list: [
+			{
+				name: "Bill Create",
+				link: "/admin/bills/create",
+				permissions: [],
+			},
+			{
+				name: "Bill",
+				link: "/admin/bills",
+				permissions: [],
+			},
+
+			{
+				name: "Payment Create",
+				link: "/admin/payments/create",
+				permissions: ["add payment"],
+			},
+			{
+				name: "Payment",
+				link: "/admin/payments",
+				permissions: ["approve payment", "add payment"],
+			},
+			{
+				name: "Debit Note Create",
+				link: "/admin/debitNotes/create",
+				permissions: ["add debit voucher"],
+			},
+			{
+				name: "Debit Note",
+				link: "/admin/debitNotes",
+				permissions: ["approve voucher", "add debit voucher"],
+			},
+			{
+				name: "Expense Report",
+				link: "/admin/expense/report",
+				permissions: [],
+			},
+		],
+	},
+	{
+		name: "Balance",
+		list: [
+			{
+				name: "Bank Balance",
+				link: "/admin/bank/balance",
+				permissions: [],
+			},
+			// {
+			// 	name: "Balance Transfer",
+			// 	link: "/admin/bank/transfer",
+			// 	permissions: ["transfer fund"],
+			// },
+			// {
+			// 	name: "Balance Transfer History",
+			// 	link: "/admin/bank/transfer/history",
+			// 	permissions: [],
+			// },
+		],
+	},
+	{
+		name: "Double Entry",
+		list: [
+			{
+				name: "Create Account",
+				link: "/admin/chart-of-account/create",
+				permissions: [],
+			},
+			{
+				name: "Chart of Accounts",
+				link: "/admin/chart-of-account/list",
+				permissions: [],
+			},
+		],
+	},
 ];

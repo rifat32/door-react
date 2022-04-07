@@ -3,6 +3,7 @@ import { BACKENDAPI } from "../../../config";
 import { apiClient } from "../../../utils/apiClient";
 import { toast } from "react-toastify";
 import { UpdateFormInterface } from "../../../interfaces/UpdateFormInterfaced";
+import { ErrorMessage } from "../../../utils/ErrorMessage";
 
 interface FormData {
 	name: string;
@@ -16,7 +17,7 @@ interface FormData {
 	taxType: string;
 	subCategory: string;
 	price: string;
-	wing_id: string;
+	category_id: string;
 }
 const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 	const [formData, setFormData] = useState<FormData>({
@@ -31,21 +32,21 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 		tax: "",
 		taxType: "",
 		price: "",
-		wing_id: "",
+		category_id: "",
 	});
-	const [wings, setWings] = useState([]);
+	const [categories, setCategories] = useState([]);
 	const [errors, setErrors] = useState<any>(null);
 
 	useEffect(() => {
-		loadWings();
+		loadCategories();
 	}, []);
 	// pagination required
-	const loadWings = () => {
+	const loadCategories = () => {
 		apiClient()
-			.get(`${BACKENDAPI}/v1.0/wings/all`)
+			.get(`${BACKENDAPI}/v1.0/categories/all`)
 			.then((response: any) => {
 				console.log(response);
-				setWings(response.data.wings);
+				setCategories(response.data.data);
 			})
 			.catch((error) => {
 				console.log(error.response);
@@ -70,7 +71,7 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 			tax: "",
 			taxType: "",
 			price: "",
-			wing_id: "",
+			category_id: "",
 		});
 	};
 	const handleSubmit = (e: React.FormEvent) => {
@@ -82,6 +83,11 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 			createData();
 		}
 	};
+	const invalidInputHandler = (error:any) => {
+		if (error.status === 422) {
+			setErrors(error.data.errors);
+		}
+	}
 	const createData = () => {
 		apiClient()
 			.post(`${BACKENDAPI}/v1.0/products`, { ...formData })
@@ -92,16 +98,8 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 			})
 			.catch((error) => {
 				console.log(error.response);
-				if (
-					error.response.status === 404 ||
-					error.response.status === 400
-				) {
-					toast.error(error.response.data.message);
-				}
-				if (error.response.status === 422) {
-					toast.error("invalid input");
-					setErrors(error.response.data.errors);
-				}
+				invalidInputHandler(error.response)
+				ErrorMessage(error.response)
 			});
 	};
 	// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -118,22 +116,14 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 				console.log(response);
 				toast.success("Data Updated");
 
-				props.updateDataStates(response.data.product);
+				props.updateDataStates(response.data.data);
 				props.showModal(false);
 			})
 			.catch((error) => {
 				console.log(error);
 				console.log(error.response);
-				if (
-					error.response.status === 404 ||
-					error.response.status === 400
-				) {
-					toast.error(error.response.data.message);
-				}
-				if (error.response.status === 422) {
-					toast.error("invalid input");
-					setErrors(error.response.data.errors);
-				}
+				ErrorMessage(error.response)
+				invalidInputHandler(error.response)
 			});
 	};
 	// end edit Data section
@@ -142,8 +132,8 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 	return (
 		<form className="row g-3" onSubmit={handleSubmit}>
 			<div className="col-md-12">
-				<label htmlFor="bill" className="form-label">
-					Wing
+				<label htmlFor="category_id" className="form-label">
+					Category
 				</label>
 				<select
 					className={
@@ -153,12 +143,12 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 								: `form-control is-valid`
 							: "form-control"
 					}
-					id="wing_id"
-					name="wing_id"
+					id="category_id"
+					name="category_id"
 					onChange={handleSelect}
-					value={formData.wing_id}>
+					value={formData.category_id}>
 					<option value="">Please Select</option>
-					{wings.map((el: any, index) => (
+					{categories.map((el: any, index) => (
 						<option
 							key={index}
 							value={el.id}
@@ -167,8 +157,8 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 						</option>
 					))}
 				</select>
-				{errors?.wing_id && (
-					<div className="invalid-feedback">{errors.wing_id[0]}</div>
+				{errors?.category_id && (
+					<div className="invalid-feedback">{errors.category_id[0]}</div>
 				)}
 				{errors && <div className="valid-feedback">Looks good!</div>}
 			</div>
