@@ -68,6 +68,12 @@ export const adminSideBarData: NavInterface[] = [
 				permissions: [],
 			},
 
+			
+			{
+				name: "Variation",
+				link: ROUTE_LIST.listVariationTemplate,
+				permissions: [],
+			},
 			{
 				name: "Category",
 				link: ROUTE_LIST.listCategory,
@@ -75,166 +81,10 @@ export const adminSideBarData: NavInterface[] = [
 			},
 		],
 	},
-	{
-		name: "Requisition",
-		list: [
-			{
-				name: "Create Requisition",
-				link: "/admin/requisitions/create",
-				permissions: ["create requisition"],
-			},
-			{
-				name: "Requisitions",
-				link: "/admin/requisitions",
-				permissions: [
-					"approve requisition",
-					"cancel requisition",
-					"create requisition",
-				],
-			},
-			{
-				name: "Requisitions Return",
-				link: "/admin/requisitions/return",
-				permissions: ["approve requisition", "cancel requisition"],
-			},
 
-			{
-				name: "Requisitions Report",
-				link: "/admin/requisitions/report",
-				permissions: ["approve requisition", "cancel requisition"],
-			},
-		],
-	},
-	{
-		name: "Parchase",
-		list: [
-			{
-				name: "Parchase Create",
-				link: "/admin/parchases/create",
-				permissions: ["create purchase"],
-			},
-			{
-				name: "Purchases",
-				link: "/admin/parchases",
-				permissions: ["purchase return", "create purchase"],
-			},
-			{
-				name: "Purchases Return",
-				link: "/admin/parchases/return",
-				permissions: ["purchase return", "cancel requisition"],
-			},
+	
+	
+	
+	
 
-			{
-				name: "Purchases Report",
-				link: "/admin/parchases/report",
-				permissions: ["purchase return"],
-			},
-		],
-	},
-	{
-		name: "Income",
-		list: [
-			{
-				name: "Revenue Create",
-				link: "/admin/revenues/create",
-				permissions: ["add revenue"],
-			},
-			{
-				name: "List Revenue",
-				link: "/admin/revenues",
-				permissions: ["approve revenue", "add revenue"],
-			},
-			{
-				name: "Credit Note Create",
-				link: "/admin/credits/create",
-				permissions: ["add credit voucher"],
-			},
-			{
-				name: "List Credit Note",
-				link: "/admin/credits",
-				permissions: ["voucher approval", "add credit voucher"],
-			},
-			{
-				name: "Income Report",
-				link: "/admin/income/report",
-				permissions: [],
-			},
-		],
-	},
-	{
-		name: "Expense",
-		list: [
-			{
-				name: "Bill Create",
-				link: "/admin/bills/create",
-				permissions: [],
-			},
-			{
-				name: "Bill",
-				link: "/admin/bills",
-				permissions: [],
-			},
-
-			{
-				name: "Payment Create",
-				link: "/admin/payments/create",
-				permissions: ["add payment"],
-			},
-			{
-				name: "Payment",
-				link: "/admin/payments",
-				permissions: ["approve payment", "add payment"],
-			},
-			{
-				name: "Debit Note Create",
-				link: "/admin/debitNotes/create",
-				permissions: ["add debit voucher"],
-			},
-			{
-				name: "Debit Note",
-				link: "/admin/debitNotes",
-				permissions: ["approve voucher", "add debit voucher"],
-			},
-			{
-				name: "Expense Report",
-				link: "/admin/expense/report",
-				permissions: [],
-			},
-		],
-	},
-	{
-		name: "Balance",
-		list: [
-			{
-				name: "Bank Balance",
-				link: "/admin/bank/balance",
-				permissions: [],
-			},
-			// {
-			// 	name: "Balance Transfer",
-			// 	link: "/admin/bank/transfer",
-			// 	permissions: ["transfer fund"],
-			// },
-			// {
-			// 	name: "Balance Transfer History",
-			// 	link: "/admin/bank/transfer/history",
-			// 	permissions: [],
-			// },
-		],
-	},
-	{
-		name: "Double Entry",
-		list: [
-			{
-				name: "Create Account",
-				link: "/admin/chart-of-account/create",
-				permissions: [],
-			},
-			{
-				name: "Chart of Accounts",
-				link: "/admin/chart-of-account/list",
-				permissions: [],
-			},
-		],
-	},
 ];

@@ -46,6 +46,10 @@ import ListCategoryPage from "./pages/AdminPages/Product/Category/ListCategoryPa
 import { ROUTE_LIST } from "./RoutConstants";
 import AddCategoryPage from "./pages/AdminPages/Product/Category/AddCategoryPage";
 
+import ListVariationTemplatePage from "./pages/AdminPages/Product/Variation/ListVariationTemplatePage";
+import AddVariationTemplatePage from "./pages/AdminPages/Product/Variation/AddVariationTemplatePage";
+
+
 
 export const RouteData: RouteInterface[] = [
 	{
@@ -132,6 +136,16 @@ export const RouteData: RouteInterface[] = [
 		component: ListProductPage,
 	},
 	{
+		path: ROUTE_LIST.listVariationTemplate,
+		exact: true,
+		component: ListVariationTemplatePage,
+	},
+	{
+		path: ROUTE_LIST.createVariationTemplate,
+		exact: false,
+		component: AddVariationTemplatePage,
+	},
+	{
 		path: ROUTE_LIST.listCategory,
 		exact: true,
 		component: ListCategoryPage,
@@ -141,6 +155,7 @@ export const RouteData: RouteInterface[] = [
 		exact: false,
 		component: AddCategoryPage,
 	},
+	
 
 	// Requisitions
 	{

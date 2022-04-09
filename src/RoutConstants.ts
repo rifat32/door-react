@@ -17,5 +17,7 @@ export enum ROUTE_LIST {
     listPaymentMethod="/admin/payment-method",
     createCategory="/admin/categories/create",
     listCategory="/admin/categories",
+    createVariationTemplate="/admin/variation-templates/create",
+    listVariationTemplate="/admin/variation-templates",
   }
 
