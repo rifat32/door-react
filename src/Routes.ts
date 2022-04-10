@@ -126,12 +126,12 @@ export const RouteData: RouteInterface[] = [
 
 	// products
 	{
-		path: "/admin/products/create",
+		path: ROUTE_LIST.createProduct,
 		exact: false,
 		component: AddProductPage,
 	},
 	{
-		path: "/admin/products",
+		path: ROUTE_LIST.listProduct,
 		exact: true,
 		component: ListProductPage,
 	},

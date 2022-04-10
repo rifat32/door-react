@@ -7,38 +7,51 @@ import { ErrorMessage } from "../../../utils/ErrorMessage";
 
 interface FormData {
 	name: string;
-	brand: string;
-	unit: string;
-	category: string;
-	sku: string;
-	// quantity: string;
-	type: string;
-	tax: string;
-	taxType: string;
-	subCategory: string;
-	price: string;
 	category_id: string;
+	sku: string;
+	description: string;
+	type: string;
+	price: string;
+	variation:Variation[];
+
+}
+interface Variation {
+	variation_template_id:string;
+	variation_value_template:any;
 }
 const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 	const [formData, setFormData] = useState<FormData>({
 		name: "",
-		brand: "",
-		unit: "",
-		category: "",
-		subCategory: "",
+		description: "",
 		sku: "",
-		// quantity: "0",
-		type: "",
-		tax: "",
-		taxType: "",
-		price: "",
+		type: "single",
 		category_id: "",
+		price: "",
+		variation:[
+			{
+				variation_template_id:"",
+				variation_value_template:[],
+
+			}
+		]
 	});
 	const [categories, setCategories] = useState([]);
+	const [variationTemplates, setVariationTemplates] = useState<any>([]);
+	const [productTypes, setProductTypes] = useState([
+		{
+			id:1,
+			value:"single"
+		},
+		{
+			id:1,
+			value:"variable"
+		}
+	]);
 	const [errors, setErrors] = useState<any>(null);
 
 	useEffect(() => {
 		loadCategories();
+		loadVariationTemplates();
 	}, []);
 	// pagination required
 	const loadCategories = () => {
@@ -52,26 +65,88 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 				console.log(error.response);
 			});
 	};
+	const loadVariationTemplates = () => {
+		apiClient()
+			.get(`${BACKENDAPI}/v1.0/variation-templates/all`)
+			.then((response: any) => {
+				console.log(response);
+				setVariationTemplates(response.data.data);
+			})
+			.catch((error) => {
+				console.log(error.response);
+			});
+	};
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setFormData({ ...formData, [e.target.name]: e.target.value });
+	};
+	const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 	const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
+	const handleVariationSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		let index:number = parseInt(e.target.name.split(".")[1])
+		console.log(index)
+		const tempValues =  JSON.parse(JSON.stringify(formData.variation)) 
+	
+		tempValues[index].variation_template_id = e.target.value;
+    let variationTemlateIndex =  variationTemplates.findIndex((el:any) => {
+		 return  el.id == e.target.value;
+	   })
+
+	   let variation_value_template = variationTemplates[variationTemlateIndex].variation_value_template.map((el:any) => {
+         el.price = 0;
+		 return el;
+	   })
+
+	   tempValues[index].variation_value_template = variation_value_template;
+	   console.log(tempValues)
+ 
+		setFormData({ ...formData,variation:tempValues });
+
+	};
+	const handleVariationPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+		let index:number = parseInt(e.target.name.split(".")[1])
+		let vindex:number = parseInt(e.target.name.split(".")[3])
+		console.log(index,vindex)
+	
+
+		const tempValues =  JSON.parse(JSON.stringify(formData.variation)) 
+	
+	  console.log(tempValues)
+		tempValues[index].variation_value_template[vindex].price = e.target.value;
+		setFormData({ ...formData,variation:tempValues });
+
+	};
+	const AddVariation = () => {
+
+		const tempValues =  JSON.parse(JSON.stringify(formData.variation)) 
+		tempValues.push(
+			{
+				variation_template_id:"",
+				variation_value_template:[],
+
+			}
+		)
+		
+		setFormData({ ...formData,variation:tempValues });
+	};
 	const resetFunction = () => {
 		setFormData({
 			name: "",
-			brand: "",
-			unit: "",
-			category: "",
-			subCategory: "",
-			sku: "",
-			// quantity: "0",
-			type: "",
-			tax: "",
-			taxType: "",
-			price: "",
-			category_id: "",
+		description: "",
+		sku: "",
+		type: "single",
+		category_id: "",
+		price: "",
+		variation:[
+			{
+				variation_template_id:"",
+				variation_value_template:[]
+		}
+		]
 		});
 	};
 	const handleSubmit = (e: React.FormEvent) => {
@@ -131,38 +206,7 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 
 	return (
 		<form className="row g-3" onSubmit={handleSubmit}>
-			<div className="col-md-12">
-				<label htmlFor="category_id" className="form-label">
-					Category
-				</label>
-				<select
-					className={
-						errors
-							? errors.wing_id
-								? `form-control is-invalid`
-								: `form-control is-valid`
-							: "form-control"
-					}
-					id="category_id"
-					name="category_id"
-					onChange={handleSelect}
-					value={formData.category_id}>
-					<option value="">Please Select</option>
-					{categories.map((el: any, index) => (
-						<option
-							key={index}
-							value={el.id}
-							style={{ textTransform: "uppercase" }}>
-							{el.name}
-						</option>
-					))}
-				</select>
-				{errors?.category_id && (
-					<div className="invalid-feedback">{errors.category_id[0]}</div>
-				)}
-				{errors && <div className="valid-feedback">Looks good!</div>}
-			</div>
-			<div className="col-md-4">
+				<div className="col-md-4">
 				<label htmlFor="name" className="form-label">
 					Product Name
 				</label>
@@ -186,48 +230,33 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 				{errors && <div className="valid-feedback">Looks good!</div>}
 			</div>
 			<div className="col-md-4">
-				<label htmlFor="brand" className="form-label">
-					Brand
-				</label>
-				<input
-					type="text"
-					className={
-						errors
-							? errors.brand
-								? `form-control is-invalid`
-								: `form-control is-valid`
-							: "form-control"
-					}
-					id="brand"
-					name="brand"
-					onChange={handleChange}
-					value={formData.brand}
-				/>
-				{errors?.brand && (
-					<div className="invalid-feedback">{errors.brand[0]}</div>
-				)}
-				{errors && <div className="valid-feedback">Looks good!</div>}
-			</div>
-			<div className="col-md-4">
-				<label htmlFor="category" className="form-label">
+				<label htmlFor="category_id" className="form-label">
 					Category
 				</label>
-				<input
-					type="text"
+				<select
 					className={
 						errors
-							? errors.category
+							? errors.category_id
 								? `form-control is-invalid`
 								: `form-control is-valid`
 							: "form-control"
 					}
-					id="category"
-					name="category"
-					onChange={handleChange}
-					value={formData.category}
-				/>
-				{errors?.category && (
-					<div className="invalid-feedback">{errors.category[0]}</div>
+					id="category_id"
+					name="category_id"
+					onChange={handleSelect}
+					value={formData.category_id}>
+					<option value="">Please Select</option>
+					{categories.map((el: any, index) => (
+						<option
+							key={index}
+							value={el.id}
+							style={{ textTransform: "uppercase" }}>
+							{el.name}
+						</option>
+					))}
+				</select>
+				{errors?.category_id && (
+					<div className="invalid-feedback">{errors.category_id[0]}</div>
 				)}
 				{errors && <div className="valid-feedback">Looks good!</div>}
 			</div>
@@ -255,7 +284,65 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 				{errors && <div className="valid-feedback">Looks good!</div>}
 			</div>
 
+		
+			<div className="col-md-12">
+				<label htmlFor="description" className="form-label">
+					Description
+				</label>
+			
+				<textarea
+				 rows={6}
+					className={
+						errors
+							? errors.description
+								? `form-control is-invalid`
+								: `form-control is-valid`
+							: "form-control"
+					}
+					id="description"
+					name="description"
+					onChange={handleTextAreaChange}
+					value={formData.description}
+				>
+					</textarea>
+				{errors?.description && (
+					<div className="invalid-feedback">{errors.description[0]}</div>
+				)}
+				{errors && <div className="valid-feedback">Looks good!</div>}
+			</div>
 			<div className="col-md-4">
+				<label htmlFor="category_id" className="form-label">
+					Product Type
+				</label>
+				<select
+					className={
+						errors
+							? errors.type
+								? `form-control is-invalid`
+								: `form-control is-valid`
+							: "form-control"
+					}
+					id="type"
+					name="type"
+					onChange={handleSelect}
+					value={formData.type}>
+				
+					{productTypes.map((el: any, index) => (
+						<option
+							key={index}
+							value={el.value}
+							style={{ textTransform: "uppercase" }}>
+							{el.value}
+						</option>
+					))}
+				</select>
+				{errors?.type && (
+					<div className="invalid-feedback">{errors.type[0]}</div>
+				)}
+				{errors && <div className="valid-feedback">Looks good!</div>}
+			</div>
+			{
+				formData.type === "single"?(<div className="col-md-4">
 				<label htmlFor="price" className="form-label">
 					Price
 				</label>
@@ -277,8 +364,126 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 					<div className="invalid-feedback">{errors.price[0]}</div>
 				)}
 				{errors && <div className="valid-feedback">Looks good!</div>}
-			</div>
+			</div>):(null)
+			}
+			{
+				formData.type === "variable"?(<div className="col-md-10 offset-md-1">
+				{/* head */}
+				<div className="row mb-2 ">
+					<div className="col-md-3 bg-success me-1">
+					 <div className="text-light">Variation</div>
+					</div>
+					<div className="col-md-8 bg-success ">
+					<div className="text-light">Variation Values</div>
+					</div>
+				</div>
+				{/* head 2 */}
+				{
+					formData.variation.map((el,index) => {
+					  return (<div className="row ">
+					  <div className="col-md-3  me-1">
+					  <div className="">
+					  
+					  <select
+						  className={
+							  errors
+								  ? errors[`variation.${index}.variation_template_id`]
+									  ? `form-control is-invalid`
+									  : `form-control is-valid`
+								  : "form-control"
+						  }
+						  id={`variation.${index}.variation_template_id`}
+						  name={`variation.${index}.variation_template_id`}
+						  onChange={handleVariationSelect}
+						  value={formData.variation[index].variation_template_id}>
+						  <option value="">Please Select</option>
+						  {variationTemplates.map((el: any, index:any) => (
+							  <option
+								  key={index}
+								  value={el.id}
+								  style={{ textTransform: "uppercase" }}>
+								  {el.name}
+							  </option>
+						  ))}
+					  </select>
+					  {errors && (
+				<>	
+				{
+					errors[`variation.${index}.variation_template_id`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
 
+				}
+				
+				</>
+					
+				)}
+					 
+				  </div>
+					  </div>
+					  <div className="col-md-8 ">
+					  <div className="row bg-primary">
+									<div className="col-md-5 me-1 text-light">Value</div>
+									<div className="col-md-5 text-light">Price</div>
+								 </div>
+						{
+							el.variation_value_template.length?(
+								el.variation_value_template.map((elv:any,vindex:any) => {
+									return 	(<div className="row">
+									<div className="col-md-5 me-1">{elv.name}</div>
+									<div className="col-md-5">
+								
+					<input
+						type="number"
+						className={
+							errors
+								? errors[`variation.${index}.variation_value_template.${vindex}.price`]
+									? `form-control is-invalid`
+									: `form-control is-valid`
+								: "form-control"
+						}
+						id={`variation.${index}.variation_value_template.${vindex}.price`}
+						name={`variation.${index}.variation_value_template.${vindex}.price`}
+						onChange={handleVariationPriceChange}
+						value={formData.variation[index].variation_value_template[vindex].price}
+					/>
+					
+					
+					{errors && (
+				<>	
+				{
+					errors[`variation.${index}.variation_value_template.${vindex}.price`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
+
+				}
+				
+				</>
+					
+				)}
+					
+					
+					
+					</div>
+								 </div>)
+								})
+							):(null)
+						}
+							 
+				
+						 
+					  
+					  </div>
+				  </div>)
+					})
+				}
+				
+			</div>):(null)
+			}
+			{
+				formData.type === "variable"?(<div className="text-center">
+		
+				<button className="btn btn-primary" 	type="button" onClick={AddVariation}>+</button>
+				
+				</div>):(null)
+			}
+		
 			<div className="text-center">
 				<button type="submit" className="btn btn-primary me-2">
 					Submit
