@@ -18,13 +18,23 @@ const ListProductsPageComponent: React.FC = () => {
 	const [prevPageLink, setPrevPageLink] = useState("");
 
 	const updateDataStates = (updatedData: any) => {
-		const tempDatas = data.map((el: any) => {
-			if (parseInt(el.id) === parseInt(updatedData.id)) {
-				return updatedData;
-			}
-			return el;
-		});
-		setData(tempDatas);
+		
+		loadData2(`${BACKENDAPI}/v1.0/products`);
+		// console.log(updatedData)
+		// let index = -1;
+		// let firstId = updatedData[0].id;
+		// const tempDatas = data.map((el: any,indx:any) => {
+		// 	if (parseInt(el.id) === parseInt(firstId)) {
+		// 		if (index === -1) {
+		// 			index =	indx
+		// 		}
+				
+		// 		return ;
+		// 	}
+		// 	return el;
+		// });
+		// tempDatas.
+		// setData(tempDatas);
 	};
 
 	useEffect(() => {
@@ -32,12 +42,26 @@ const ListProductsPageComponent: React.FC = () => {
 	}, []);
 
 	// pagination required
+	
 	const loadData = (link: string) => {
 		apiClient()
 			.get(link)
 			.then((response: any) => {
 				console.log(response.data.products);
 				setData([...data, ...response.data.products.data]);
+				setNextPageLink(response.data.products.next_page_url);
+				setPrevPageLink(response.data.products.prev_page_url);
+			})
+			.catch((error) => {
+				console.log(error.response);
+			});
+	};
+	const loadData2 = (link: string) => {
+		apiClient()
+			.get(link)
+			.then((response: any) => {
+				console.log(response.data.products);
+				setData(response.data.products.data);
 				setNextPageLink(response.data.products.next_page_url);
 				setPrevPageLink(response.data.products.prev_page_url);
 			})
@@ -67,9 +91,9 @@ const ListProductsPageComponent: React.FC = () => {
 			<table className="table">
 				<thead>
 					<tr>
-						<th scope="col">Wing</th>
+					
 						<th scope="col"> Product Name</th>
-						<th scope="col">Brand</th>
+						<th scope="col">Type</th>
 						<th scope="col">Category</th>
 						<th scope="col">Sku</th>
 						{/* <th scope="col">Quantity</th> */}
@@ -82,9 +106,9 @@ const ListProductsPageComponent: React.FC = () => {
 						{data.map((el: any) => {
 							return (
 								<tr key={el.id}>
-									<td>{el.wing?.name && el.wing.name}</td>
-									<td>{el.name && el.name}</td>
-									<td>{el.brand && el.brand}</td>
+							
+									<td>{el.name && el.name }</td>
+									<td>{el.type && el.type}</td>
 									<td>{el.category && el.category}</td>
 									<td>{el.sku && el.sku}</td>
 									{/* <td>{el.pQuantity}</td> */}

@@ -4,8 +4,10 @@ import { apiClient } from "../../../utils/apiClient";
 import { toast } from "react-toastify";
 import { UpdateFormInterface } from "../../../interfaces/UpdateFormInterfaced";
 import { ErrorMessage } from "../../../utils/ErrorMessage";
+import { constants } from "os";
 
 interface FormData {
+	id:string;
 	name: string;
 	category_id: string;
 	sku: string;
@@ -21,6 +23,7 @@ interface Variation {
 }
 const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 	const [formData, setFormData] = useState<FormData>({
+		id:"",
 		name: "",
 		description: "",
 		sku: "",
@@ -91,11 +94,14 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 		const tempValues =  JSON.parse(JSON.stringify(formData.variation)) 
 	
 		tempValues[index].variation_template_id = e.target.value;
+		tempValues[index].id = 0;
+		
     let variationTemlateIndex =  variationTemplates.findIndex((el:any) => {
 		 return  el.id == e.target.value;
 	   })
 
 	   let variation_value_template = variationTemplates[variationTemlateIndex].variation_value_template.map((el:any) => {
+		el.id = 0
          el.price = 0;
 		 return el;
 	   })
@@ -135,6 +141,7 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 	};
 	const resetFunction = () => {
 		setFormData({
+			id:"",
 			name: "",
 		description: "",
 		sku: "",
@@ -179,8 +186,61 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 	};
 	// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	// edit data section
+	const loadProduct = (id:string) => {
+		apiClient()
+			.get(`${BACKENDAPI}/v1.0/products/${id}`)
+			.then((response: any) => {
+				console.log(response);
+				const {id,name,category_id,sku,description,type,product_variations,variations} = response.data.product
+
+				
+				
+              let price = "";
+			  let tempVariation = []
+				if(type === "single"){
+                   price = variations[0].price
+				} else {
+					tempVariation = product_variations.map((el:any) => {
+
+			
+
+
+					
+						el.variation_value_template = el.variations.map((el2:any) => {
+						 return el2;
+							 })
+							return el
+					   
+					   })
+				}
+			
+
+				console.log(tempVariation)
+
+
+				setFormData({
+				...formData,
+				id,
+				name,
+				category_id,
+				sku,
+				description,
+				type,
+				price,
+				variation:tempVariation
+				})
+				// setCategories(response.data.data);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
 	useEffect(() => {
 		if (props.type == "update") {
+			console.log(props.value)
+			loadProduct(props.value.id)
+			
+			return
 			setFormData(props.value);
 		}
 	}, []);
@@ -325,7 +385,9 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 					id="type"
 					name="type"
 					onChange={handleSelect}
-					value={formData.type}>
+					value={formData.type}
+					disabled={props.type === "update"}
+					>
 				
 					{productTypes.map((el: any, index) => (
 						<option
