@@ -4,7 +4,7 @@ import { apiClient } from "../../../utils/apiClient";
 import { toast } from "react-toastify";
 import { UpdateFormInterface } from "../../../interfaces/UpdateFormInterfaced";
 import { ErrorMessage } from "../../../utils/ErrorMessage";
-import { constants } from "os";
+
 
 interface FormData {
 	id:string;
@@ -15,6 +15,8 @@ interface FormData {
 	type: string;
 	price: string;
 	variation:Variation[];
+    image:"";
+	images:string[];
 
 }
 interface Variation {
@@ -36,8 +38,11 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 				variation_value_template:[],
 
 			}
-		]
+		],
+	    image: "",
+		images:[]
 	});
+	const [imageFile, setImageFile] = useState<any>();
 	const [categories, setCategories] = useState([]);
 	const [variationTemplates, setVariationTemplates] = useState<any>([]);
 	const [productTypes, setProductTypes] = useState([
@@ -88,6 +93,86 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 	const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
+
+	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	
+		if (!e.target.files) {
+			return;
+		  }
+		 
+		let file = e.target.files[0]
+		setImageFile(file)
+
+            let data:any = new FormData();
+            data.append('image', file, file.name);
+            apiClient().post(`${BACKENDAPI}/v1.0/image/upload/single/product`, data, {
+                headers: {
+                    'accept': 'application/json',
+                    'Accept-Language': 'en-US,en;q=0.8',
+                    'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
+                }
+            })
+			.then((response: any) => {
+				console.log(response);
+			setFormData((prevData)=> {
+return {
+	...prevData,
+	image:response.data.image
+}
+			})
+			})
+			.catch((error) => {
+				console.log(error.response);
+			});
+
+		
+	  };
+	  const handleMultipleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	
+		if(!e.target.files) {
+			return;
+		  }
+const tempImages:string[] = [];
+
+let files:any = e.target.files
+for (var i = 0; i < files.length; i++) 
+{
+	let data:any = new FormData();
+	data.append('image', e.target.files[i], e.target.files[i].name);
+	apiClient().post(`${BACKENDAPI}/v1.0/image/upload/single/product`, data, {
+		headers: {
+			'accept': 'application/json',
+			'Accept-Language': 'en-US,en;q=0.8',
+			'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
+		}
+	})
+	.then((response: any) => {
+		console.log(response);
+	tempImages.push(response.data.image)
+	if(i = files.length -1 ){
+		setFormData((prevData)=> {
+			return {
+				...prevData,
+				images:[...tempImages]
+			}
+						})
+	}
+	})
+	.catch((error) => {
+		console.log(error.response);
+	});
+}
+
+
+		 
+		
+	
+
+        
+
+		
+	  };
+	  
 	const handleVariationSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		let index:number = parseInt(e.target.name.split(".")[1])
 		console.log(index)
@@ -153,7 +238,9 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 				variation_template_id:"",
 				variation_value_template:[]
 		}
-		]
+		],
+	 image: "",
+	 images:[]
 		});
 	};
 	const handleSubmit = (e: React.FormEvent) => {
@@ -171,8 +258,12 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 		}
 	}
 	const createData = () => {
+	
+	
+
 		apiClient()
-			.post(`${BACKENDAPI}/v1.0/products`, { ...formData })
+			.post(`${BACKENDAPI}/v1.0/products`, { ...formData},
+				)
 			.then((response) => {
 				console.log(response);
 				toast.success("Data saved");
@@ -191,7 +282,7 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 			.get(`${BACKENDAPI}/v1.0/products/${id}`)
 			.then((response: any) => {
 				console.log(response);
-				const {id,name,category_id,sku,description,type,product_variations,variations} = response.data.product
+				const {id,name,category_id,sku,description,type,product_variations,variations,image} = response.data.product
 
 				
 				
@@ -227,7 +318,8 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 				description,
 				type,
 				price,
-				variation:tempVariation
+				variation:tempVariation,
+				image
 				})
 				// setCategories(response.data.data);
 			})
@@ -367,6 +459,58 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 					</textarea>
 				{errors?.description && (
 					<div className="invalid-feedback">{errors.description[0]}</div>
+				)}
+				{errors && <div className="valid-feedback">Looks good!</div>}
+			</div>
+			<div className="col-md-4">
+				<label htmlFor="sku" className="form-label">
+				 {imageFile?.name?imageFile.name:"upload image"}
+				</label>
+				<br />
+				{imageFile && 	<img src={URL.createObjectURL(imageFile)} alt="..." height={100} width={100} />}
+	
+				<input
+					type="file"
+					className={
+						errors
+							? errors.image
+								? `form-control is-invalid`
+								: `form-control is-valid`
+							: "form-control"
+					}
+					id="image"
+					name="image"
+					onChange={handleImageChange}
+			
+				/>
+				{errors?.image && (
+					<div className="invalid-feedback">{errors.image[0]}</div>
+				)}
+				{errors && <div className="valid-feedback">Looks good!</div>}
+			</div>
+			<div className="col-md-4">
+				<label htmlFor="images" className="form-label">
+				Upload multiple Image
+				</label>
+				
+	
+				<input
+					type="file"
+					className={
+						errors
+							? errors.images
+								? `form-control is-invalid`
+								: `form-control is-valid`
+							: "form-control"
+					}
+					id="images"
+					name="images"
+					onChange={handleMultipleImageChange}
+					multiple
+			
+				/>
+				{errors?.images && (
+					<div className="invalid-feedback">{errors.images[0]}</div>
 				)}
 				{errors && <div className="valid-feedback">Looks good!</div>}
 			</div>

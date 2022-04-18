@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BACKENDAPI } from "../../../config";
+import { BACKEND, BACKENDAPI } from "../../../config";
 import { apiClient } from "../../../utils/apiClient";
 import CustomModal from "../../Modal/Modal";
 import AddProductForm from "../../Forms/ProductForms/AddProductForm";
@@ -93,6 +93,7 @@ const ListProductsPageComponent: React.FC = () => {
 					<tr>
 					
 						<th scope="col"> Product Name</th>
+						<th scope="col">Image</th>
 						<th scope="col">Type</th>
 						<th scope="col">Category</th>
 						<th scope="col">Sku</th>
@@ -107,7 +108,9 @@ const ListProductsPageComponent: React.FC = () => {
 							return (
 								<tr key={el.id}>
 							
-									<td>{el.name && el.name }</td>
+								
+							<td>{el.name && el.name }</td>
+							<td>{el.image && <img src={`${BACKEND}/${el.image}`} height={100} width={100}/>	 }</td>
 									<td>{el.type && el.type}</td>
 									<td>{el.category && el.category}</td>
 									<td>{el.sku && el.sku}</td>
