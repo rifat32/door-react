@@ -14,6 +14,7 @@ interface FormData {
 	description: string;
 	type: string;
 	price: string;
+	qty: string;
 	variation:Variation[];
     image:"";
 	images:string[];
@@ -32,6 +33,7 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 		type: "single",
 		category_id: "",
 		price: "",
+		qty: "",
 		variation:[
 			{
 				variation_template_id:"",
@@ -188,6 +190,7 @@ for (var i = 0; i < files.length; i++)
 	   let variation_value_template = variationTemplates[variationTemlateIndex].variation_value_template.map((el:any) => {
 		el.id = 0
          el.price = 0;
+		 el.qty = 0;
 		 return el;
 	   })
 
@@ -208,6 +211,20 @@ for (var i = 0; i < files.length; i++)
 	
 	  console.log(tempValues)
 		tempValues[index].variation_value_template[vindex].price = e.target.value;
+		setFormData({ ...formData,variation:tempValues });
+
+	};
+	const handleVariationQtyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+		let index:number = parseInt(e.target.name.split(".")[1])
+		let vindex:number = parseInt(e.target.name.split(".")[3])
+		console.log(index,vindex)
+	
+
+		const tempValues =  JSON.parse(JSON.stringify(formData.variation)) 
+	
+	  console.log(tempValues)
+		tempValues[index].variation_value_template[vindex].qty = e.target.value;
 		setFormData({ ...formData,variation:tempValues });
 
 	};
@@ -233,6 +250,7 @@ for (var i = 0; i < files.length; i++)
 		type: "single",
 		category_id: "",
 		price: "",
+		qty: "",
 		variation:[
 			{
 				variation_template_id:"",
@@ -287,9 +305,11 @@ for (var i = 0; i < files.length; i++)
 				
 				
               let price = "";
+			  let qty = "";
 			  let tempVariation = []
 				if(type === "single"){
                    price = variations[0].price
+				   qty = variations[0].qty
 				} else {
 					tempVariation = product_variations.map((el:any) => {
 
@@ -318,6 +338,7 @@ for (var i = 0; i < files.length; i++)
 				description,
 				type,
 				price,
+				qty,
 				variation:tempVariation,
 				image
 				})
@@ -358,7 +379,7 @@ for (var i = 0; i < files.length; i++)
 
 	return (
 		<form className="row g-3" onSubmit={handleSubmit}>
-				<div className="col-md-4">
+			<div className="col-md-4">
 				<label htmlFor="name" className="form-label">
 					Product Name
 				</label>
@@ -573,6 +594,31 @@ for (var i = 0; i < files.length; i++)
 			</div>):(null)
 			}
 			{
+				formData.type === "single"?(<div className="col-md-4">
+				<label htmlFor="qty" className="form-label">
+					Quantity
+				</label>
+				<input
+					type="number"
+					className={
+						errors
+							? errors.qty
+								? `form-control is-invalid`
+								: `form-control is-valid`
+							: "form-control"
+					}
+					id="qty"
+					name="qty"
+					onChange={handleChange}
+					value={formData.qty}
+				/>
+				{errors?.qty && (
+					<div className="invalid-feedback">{errors.qty[0]}</div>
+				)}
+				{errors && <div className="valid-feedback">Looks good!</div>}
+			</div>):(null)
+			}
+			{
 				formData.type === "variable"?(<div className="col-md-10 offset-md-1">
 				{/* head */}
 				<div className="row mb-2 ">
@@ -627,15 +673,16 @@ for (var i = 0; i < files.length; i++)
 					  </div>
 					  <div className="col-md-8 ">
 					  <div className="row bg-primary">
-									<div className="col-md-5 me-1 text-light">Value</div>
-									<div className="col-md-5 text-light">Price</div>
+									<div className="col-md-4   text-light">Value</div>
+									<div className="col-md-4  text-light">Price</div>
+									<div className="col-md-4 text-light">Quantity</div>
 								 </div>
 						{
 							el.variation_value_template.length?(
 								el.variation_value_template.map((elv:any,vindex:any) => {
 									return 	(<div className="row">
-									<div className="col-md-5 me-1">{elv.name}</div>
-									<div className="col-md-5">
+									<div className="col-md-4 ">{elv.name}</div>
+									<div className="col-md-4">
 								
 					<input
 						type="number"
@@ -667,6 +714,39 @@ for (var i = 0; i < files.length; i++)
 					
 					
 					</div>
+
+					<div className="col-md-4">
+								
+								<input
+									type="number"
+									className={
+										errors
+											? errors[`variation.${index}.variation_value_template.${vindex}.qty`]
+												? `form-control is-invalid`
+												: `form-control is-valid`
+											: "form-control"
+									}
+									id={`variation.${index}.variation_value_template.${vindex}.qty`}
+									name={`variation.${index}.variation_value_template.${vindex}.qty`}
+									onChange={handleVariationQtyChange}
+									value={formData.variation[index].variation_value_template[vindex].qty}
+								/>
+								
+								
+								{errors && (
+							<>	
+							{
+								errors[`variation.${index}.variation_value_template.${vindex}.qty`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
+			
+							}
+							
+							</>
+								
+							)}
+								
+								
+								
+								</div>
 								 </div>)
 								})
 							):(null)
