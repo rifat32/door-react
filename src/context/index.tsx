@@ -5,7 +5,7 @@ import { apiClient } from "../utils/apiClient";
 const defaultContext = {
 	user: null,
 	permissions: ["test"],
-	roles: [],
+	roles: [""],
 	userLoading: true,
 	setUserFunction: (toogle: boolean): void => {},
 	setUserLoadingFunction: (user: any): void => {},

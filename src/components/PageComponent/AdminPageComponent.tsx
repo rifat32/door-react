@@ -4,10 +4,13 @@ import { withRouter } from "react-router-dom";
 import Loader from "react-loader-spinner";
 // this is for all admin page for sequirity
 const AdminPageComponent: React.FC = (props: any) => {
-	const { setAdminBar, user, userLoading } = useContext(AppContext);
+	const { setAdminBar, user,permissions, roles, userLoading } = useContext(AppContext);
 	useEffect(() => {
+		
 		// if app is not loading and no user found then change location
-		if (!userLoading && !user) {
+	
+		if ((!userLoading && !user) || (!userLoading && !roles.includes("system user")) ) {
+			
 			props.history.push("/");
 		}
 		// while loading it will hide the admin bars

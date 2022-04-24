@@ -164,10 +164,13 @@ return el;
 	}
 	const handleChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
 		let vid = e.target.value.split("_")[1]
-
+		console.log(e.target.checked)
 		const tempData = data.map((el: any) => {
-			if (el.vid === parseInt(vid)) {
+			console.log(el.vid,parseInt(vid))
+			if (parseInt(el.vid) === parseInt(vid)) {
+
 				el.checked = e.target.checked
+				console.log(e.target.checked)
 			}
 			return el
 		})
@@ -264,6 +267,8 @@ return el;
 			if(el.checked){
 				tempData.push({
 					id:el.id,
+					vid:el.vid
+
 				})
 			}
            
@@ -272,7 +277,7 @@ return el;
           toast.error("Please select first")   
 		} else {
 			apiClient()
-			.put(`${BACKENDAPI}/v1.0/products/bulkedit/delete`,{products:tempData})
+			.put(`${BACKENDAPI}/v1.0/products/bulkedit/delete`,{variations:tempData})
 			.then((response: any) => {
 				// console.log(response);
 				// const tempDatas = data.filter((el: any) => {

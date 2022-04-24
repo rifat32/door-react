@@ -54,6 +54,7 @@ const UsersPageComponent: React.FC = () => {
 						<th scope="col">Name</th>
 						<th scope="col">email</th>
 						<th scope="col">roles</th>
+						<th scope="col">discount</th>
 					</tr>
 				</thead>
 				{data.length ? (
@@ -73,6 +74,8 @@ const UsersPageComponent: React.FC = () => {
 									) : (
 										<td></td>
 									)}
+
+<td>{el.discount}%</td>
 									<td>
 										<div className="btn-group">
 											<button

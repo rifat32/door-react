@@ -9,6 +9,7 @@ interface FormData {
 	password: string;
 	password_confirmation: string;
 	role_name: string;
+	discount:string;
 }
 const AddUserForm: React.FC = () => {
 	const [formData, setFormData] = useState<FormData>({
@@ -17,6 +18,7 @@ const AddUserForm: React.FC = () => {
 		password: "",
 		password_confirmation: "",
 		role_name: "",
+		discount:""
 	});
 	const [errors, setErrors] = useState<any>(null);
 	const [roles, setRoles] = useState([]);
@@ -56,6 +58,7 @@ const AddUserForm: React.FC = () => {
 			password: "",
 			password_confirmation: "",
 			role_name: "",
+			discount:""
 		});
 	};
 	// handle submit Function
@@ -87,7 +90,7 @@ const AddUserForm: React.FC = () => {
 
 	return (
 		<form className="row g-3">
-			<div className="col-12">
+			<div className="col-6">
 				<label htmlFor="yourPassword" className="form-label">
 					Name
 				</label>
@@ -111,7 +114,7 @@ const AddUserForm: React.FC = () => {
 				)}
 				{errors && <div className="valid-feedback">Looks good!</div>}
 			</div>
-			<div className="col-12">
+			<div className="col-6">
 				<label htmlFor="yourEmail" className="form-label">
 					Email
 				</label>
@@ -140,7 +143,7 @@ const AddUserForm: React.FC = () => {
 					{errors && <div className="valid-feedback">Looks good!</div>}
 				</div>
 			</div>
-			<div className="col-12">
+			<div className="col-6">
 				<label htmlFor="password" className="form-label">
 					Password
 				</label>
@@ -164,7 +167,7 @@ const AddUserForm: React.FC = () => {
 				)}
 				{errors && <div className="valid-feedback">Looks good!</div>}
 			</div>
-			<div className="col-12">
+			<div className="col-6">
 				<label htmlFor="password_confirmation" className="form-label">
 					Confirm Password
 				</label>
@@ -219,6 +222,30 @@ const AddUserForm: React.FC = () => {
 				</select>
 				{errors?.role_name && (
 					<div className="invalid-feedback">{errors.role_name[0]}</div>
+				)}
+				{errors && <div className="valid-feedback">Looks good!</div>}
+			</div>
+			<div className="col-6">
+				<label htmlFor="discount" className="form-label">
+					Discount
+				</label>
+				<input
+					type="text"
+					name="discount"
+					className={
+						errors
+							? errors.discount
+								? `form-control is-invalid`
+								: `form-control is-valid`
+							: "form-control"
+					}
+					id="discount"
+					required
+					onChange={handleChange}
+					value={formData.discount}
+				/>
+				{errors?.discount && (
+					<div className="invalid-feedback">{errors.discount[0]}</div>
 				)}
 				{errors && <div className="valid-feedback">Looks good!</div>}
 			</div>
