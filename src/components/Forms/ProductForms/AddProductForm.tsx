@@ -176,8 +176,12 @@ for (var i = 0; i < files.length; i++)
 	  };
 	  
 	const handleVariationSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		if(!e.target.value){
+			return;
+		}
 		let index:number = parseInt(e.target.name.split(".")[1])
 		console.log(index)
+	
 		const tempValues =  JSON.parse(JSON.stringify(formData.variation)) 
 	
 		tempValues[index].variation_template_id = e.target.value;
@@ -212,6 +216,60 @@ for (var i = 0; i < files.length; i++)
 	  console.log(tempValues)
 		tempValues[index].variation_value_template[vindex].price = e.target.value;
 		setFormData({ ...formData,variation:tempValues });
+
+	};
+	const handleVariationValueDelete = (index:number,vindex:number) => {
+		if (window.confirm("Are you sure  want to delete ?")) {
+			console.log(index,vindex)
+			if (props.type === "update") {
+				
+				apiClient()
+				.delete(`${BACKENDAPI}/v1.0/products/${formData.variation[index].variation_value_template[vindex].id}`)
+				.then((response: any) => {
+					console.log(response)
+					console.log(formData.variation[index].variation_value_template[vindex].id)
+				})
+				.catch((error) => {
+					console.log(error.response);
+				});
+			}
+
+			const tempVariation =  JSON.parse(JSON.stringify(formData.variation)) 
+		
+		  console.log(tempVariation)
+		  
+		 const tempValue =	tempVariation[index].variation_value_template.filter((el:any,indx:number) => {
+			
+				// if(indx == vindex) {
+				// 	console.log("ffff",indx,vindex)
+				//    return el;
+				// }
+				return indx !== vindex;
+			});
+			tempVariation[index].variation_value_template = tempValue
+			
+			 setFormData({ ...formData,variation:tempVariation });
+		}
+	
+	};
+	const handleVariationValueAdd = (index:number) => {
+
+	
+	
+	
+
+		const tempVariation =  JSON.parse(JSON.stringify(formData.variation)) 
+	
+	  console.log(tempVariation)
+	tempVariation[index].variation_value_template.push({
+id:0,
+		name:"dummy",
+		price:0,
+		qty:0
+	})
+	
+		
+		 setFormData({ ...formData,variation:tempVariation });
 
 	};
 	const handleVariationQtyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -622,10 +680,10 @@ for (var i = 0; i < files.length; i++)
 				formData.type === "variable"?(<div className="col-md-10 offset-md-1">
 				{/* head */}
 				<div className="row mb-2 ">
-					<div className="col-md-3 bg-success me-1">
+					<div className="col-md-2 bg-success me-1">
 					 <div className="text-light">Variation</div>
 					</div>
-					<div className="col-md-8 bg-success ">
+					<div className="col-md-9 bg-success ">
 					<div className="text-light">Variation Values</div>
 					</div>
 				</div>
@@ -633,7 +691,7 @@ for (var i = 0; i < files.length; i++)
 				{
 					formData.variation.map((el,index) => {
 					  return (<div className="row ">
-					  <div className="col-md-3  me-1">
+					  <div className="col-md-2  me-1">
 					  <div className="">
 					  
 					  <select
@@ -671,18 +729,26 @@ for (var i = 0; i < files.length; i++)
 					 
 				  </div>
 					  </div>
-					  <div className="col-md-8 ">
-					  <div className="row bg-primary">
-									<div className="col-md-4   text-light">Value</div>
-									<div className="col-md-4  text-light">Price</div>
-									<div className="col-md-4 text-light">Quantity</div>
+					  <div className="col-md-9 ">
+					  <div className="row ">
+									<div className="col-md-3 me-1   text-light bg-primary">Value</div>
+									<div className="col-md-3 me-1 text-light bg-primary">Price</div>
+									<div className="col-md-3 me-1 text-light bg-primary">Quantity</div>
+									<div className="col-md-2">
+								<button className="btn  btn-primary"
+								//  style={{height:"0.1rem"}}
+								  	type="button" onClick={() => handleVariationValueAdd(index)}>+</button>	
+								</div>
 								 </div>
 						{
 							el.variation_value_template.length?(
 								el.variation_value_template.map((elv:any,vindex:any) => {
-									return 	(<div className="row">
-									<div className="col-md-4 ">{elv.name}</div>
-									<div className="col-md-4">
+									return 	(<div className="row mt-2">
+									<div className="col-md-3 me-1 ">{elv.name}</div>
+
+	{/* price start */}
+
+									<div className="col-md-3 me-1">
 								
 					<input
 						type="number"
@@ -714,8 +780,9 @@ for (var i = 0; i < files.length; i++)
 					
 					
 					</div>
-
-					<div className="col-md-4">
+					{/* price end */}
+	{/* quantity start */}
+					<div className="col-md-3 me-1">
 								
 								<input
 									type="number"
@@ -747,6 +814,17 @@ for (var i = 0; i < files.length; i++)
 								
 								
 								</div>
+{/* quantity end */}
+
+								<div className="col-md-2">
+								<button className="btn  btn-danger"
+								//  style={{height:"0.1rem"}}
+								  	type="button" onClick={() => handleVariationValueDelete(index,vindex)}>-</button>	
+								</div>
+
+
+
+
 								 </div>)
 								})
 							):(null)

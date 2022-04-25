@@ -79,10 +79,22 @@ export const adminSideBarData: NavInterface[] = [
 				link: ROUTE_LIST.listCategory,
 				permissions: [],
 			},
+
 		],
 	},
 
-	
+		{
+		name: "Coupon",
+		list: [
+			{
+				name: "Coupon List",
+				link: ROUTE_LIST.listCoupon,
+				permissions: [],
+			},
+		
+			
+		],
+	},
 	
 	
 	

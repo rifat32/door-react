@@ -28,6 +28,9 @@ const ListProductsPageComponent: React.FC = () => {
 	const [priceModalIsOpen, setIsPriceModalOpen] = React.useState(false);
 	const showModal = (show: boolean) => {
 		setIsOpen(show);
+		if(!show){
+			updateDataStates(null)
+		}
 	};
 	const showPriceModal = (show: boolean) => {
 		setIsPriceModalOpen(show);
@@ -260,37 +263,39 @@ return el;
 		
 	}
 	const bulkDelete = () => {
-
-
-		const tempData:any[] = [];
-		data.map((el:any) => {
-			if(el.checked){
-				tempData.push({
-					id:el.id,
-					vid:el.vid
-
-				})
-			}
-           
-		})
-		if(!tempData.length){
-          toast.error("Please select first")   
-		} else {
-			apiClient()
-			.put(`${BACKENDAPI}/v1.0/products/bulkedit/delete`,{variations:tempData})
-			.then((response: any) => {
-				// console.log(response);
-				// const tempDatas = data.filter((el: any) => {
-				// 	return el.id !== id;
-				// });
-				// setData(tempDatas);
-				updateDataStates(null)
-				toast.success("data deleted successfully");
+		if (window.confirm("Are you sure  want to delete ?")) {
+			const tempData:any[] = [];
+			data.map((el:any) => {
+				if(el.checked){
+					tempData.push({
+						id:el.id,
+						vid:el.vid
+	
+					})
+				}
+			   
 			})
-			.catch((error) => {
-				console.log(error.response);
-			});
+			if(!tempData.length){
+			  toast.error("Please select first")   
+			} else {
+				apiClient()
+				.put(`${BACKENDAPI}/v1.0/products/bulkedit/delete`,{variations:tempData})
+				.then((response: any) => {
+					// console.log(response);
+					// const tempDatas = data.filter((el: any) => {
+					// 	return el.id !== id;
+					// });
+					// setData(tempDatas);
+					updateDataStates(null)
+					toast.success("data deleted successfully");
+				})
+				.catch((error) => {
+					console.log(error.response);
+				});
+			}
+			
 		}
+
 		
 	}
 	

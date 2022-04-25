@@ -21,5 +21,7 @@ export enum ROUTE_LIST {
     listVariationTemplate="/admin/variation-templates",
     createProduct="/admin/products/create",
     listProduct="/admin/products",
+    createCoupon="/admin/coupon/create",
+    listCoupon="/admin/coupon",
   }
 
