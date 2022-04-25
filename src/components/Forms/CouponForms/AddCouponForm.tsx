@@ -153,7 +153,7 @@ loadCategories()
 					name="category_id"
 					onChange={handleSelect}
 					value={formData.category_id}>
-					<option value="">Please Select</option>
+					<option value="">All</option>
 					{categories.map((el: any, index) => (
 						<option
 							key={index}
