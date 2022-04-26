@@ -407,7 +407,7 @@ return el;
 												<li>
 													<a
 														onClick={() => {
-															deleteData(el.id);
+															deleteData(el.vid);
 														}}
 														className="dropdown-item"
 														href="#">
