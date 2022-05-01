@@ -23,5 +23,6 @@ export enum ROUTE_LIST {
     listProduct="/admin/products",
     createCoupon="/admin/coupon/create",
     listCoupon="/admin/coupon",
+    listOrder="/admin/orders",
   }
 

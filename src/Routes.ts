@@ -50,6 +50,7 @@ import ListVariationTemplatePage from "./pages/AdminPages/Product/Variation/List
 import AddVariationTemplatePage from "./pages/AdminPages/Product/Variation/AddVariationTemplatePage";
 import ListCouponPage from "./pages/AdminPages/Coupon/ListCouponPage";
 import AddCouponPage from "./pages/AdminPages/Coupon/AddCouponPage";
+import ListOrderPage from "./pages/AdminPages/Order/ListOrderPage";
 
 
 
@@ -166,6 +167,11 @@ export const RouteData: RouteInterface[] = [
 		path: ROUTE_LIST.createCoupon,
 		exact: false,
 		component: AddCouponPage,
+	},
+	{
+		path: ROUTE_LIST.listOrder,
+		exact: true,
+		component: ListOrderPage,
 	},
 	
 
@@ -301,5 +307,6 @@ export const RouteData: RouteInterface[] = [
 		exact: false,
 		component: ChartOfAccountsPage,
 	},
+	
 ];
 //

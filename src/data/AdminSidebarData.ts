@@ -95,7 +95,18 @@ export const adminSideBarData: NavInterface[] = [
 			
 		],
 	},
-	
+	{
+		name: "Order",
+		list: [
+			{
+				name: "Order List",
+				link: ROUTE_LIST.listOrder,
+				permissions: [],
+			},
+		
+			
+		],
+	},
 	
 	
 
