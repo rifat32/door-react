@@ -4,7 +4,7 @@ const FooterComponent = () => {
 	return (
 		<>
 			<footer id="footer" className="footer">
-				<div className="copyright">
+				{/* <div className="copyright">
 					© Copyright{" "}
 					<strong>
 						<span>NiceAdmin</span>
@@ -14,7 +14,7 @@ const FooterComponent = () => {
 				<div className="credits">
 					Designed by{" "}
 					<a href="https://bootstrapmade.com/">BootstrapMade</a>
-				</div>
+				</div> */}
 			</footer>
 		</>
 	);

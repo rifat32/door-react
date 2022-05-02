@@ -1,4 +1,4 @@
-export const APPNAME = "Tax";
+export const APPNAME = "Doors";
 // export const BACKEND = "http://127.0.0.1:8000";
   export const BACKEND = "https://dotzdemo.xyz/door-laravel";
 
