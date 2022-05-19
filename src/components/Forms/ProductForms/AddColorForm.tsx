@@ -8,29 +8,18 @@ import { ErrorMessage } from "../../../utils/ErrorMessage";
 interface FormData {
 	id: string;
 	name: string;
-	variation_value_template:TemplateValue[]
+	code:string
 	
 }
-interface TemplateValue {
-	id: string;
-	name: string;
-	variation_template_id: string;
-	
 
-}
 
-const AddVariationTemplateForm: React.FC<UpdateFormInterface> = (props) => {
+const AddColorForm: React.FC<UpdateFormInterface> = (props) => {
 	const [formData, setFormData] = useState<FormData>({
 		id:"",
 	name: "",
-	variation_value_template:[
-		{
-			id:"",
-			name:"",
-			variation_template_id:""
-		}
-	]
-	});
+	code: "",
+	}
+	);
 	
 	const [errors, setErrors] = useState<any>(null);
 
@@ -43,48 +32,15 @@ const invalidInputHandler = (error:any) => {
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
-	const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		let index:number = parseInt(e.target.name.split(".")[1])
-		console.log(index)
-		const tempValues = [...formData.variation_value_template]
-	
-		tempValues[index].name = e.target.value;
-		setFormData({ ...formData,variation_value_template:tempValues });
-	};
-	
-	const AddValue = () => {
 
-		const tempValues = [...formData.variation_value_template]
-		tempValues.push({
-			id:"",
-			name:"",
-			variation_template_id:formData.id
-		})
-		
-		setFormData({ ...formData,variation_value_template:tempValues });
-	};
-	const deleteValue = () => {
+	
 
-		const tempValues = [...formData.variation_value_template]
-	
-		if(tempValues.length > 1){
-			tempValues.pop()
-		}
-		setFormData({ ...formData,variation_value_template:tempValues });
-		
-	};
-	
+
 	const resetFunction = () => {
 		setFormData({
 			id:"",
 			name: "",
-			variation_value_template:[
-				{
-					id:"",
-					name:"",
-					variation_template_id:""
-				}
-			]
+			code: "",
 		});
 	};
 
@@ -100,7 +56,7 @@ const invalidInputHandler = (error:any) => {
 	};
 	const createData = () => {
 		apiClient()
-			.post(`${BACKENDAPI}/v1.0/variation-templates`, { ...formData })
+			.post(`${BACKENDAPI}/v1.0/colors`, { ...formData })
 			.then((response) => {
 				console.log(response);
 				toast.success("Data saved");
@@ -123,7 +79,7 @@ const invalidInputHandler = (error:any) => {
 	}, []);
 	const updateData = () => {
 		apiClient()
-			.put(`${BACKENDAPI}/v1.0/variation-templates`, { ...formData })
+			.put(`${BACKENDAPI}/v1.0/colors`, { ...formData })
 			.then((response: any) => {
 				console.log(response);
 				toast.success("Data Updated");
@@ -145,7 +101,7 @@ const invalidInputHandler = (error:any) => {
 		
 			<div className="col-md-4 offset-4">
 				<label htmlFor="name" className="form-label">
-					 Height
+					 Name
 				</label>
 				<input
 					type="text"
@@ -167,60 +123,32 @@ const invalidInputHandler = (error:any) => {
 				{errors && <div className="valid-feedback">Looks good!</div>}
 
 			</div>
-		
-	
-		<div className="col-md-4 offset-4">
-				<label htmlFor="variation_value_template" className="form-label">
-					 Widths
+			<div className="col-md-4 offset-4">
+				<label htmlFor="code" className="form-label">
+					 Code
 				</label>
-				{
-					formData.variation_value_template.map( (el,index) => {
-						return (
-					<>
-				
-					<input
+				<input
 					type="text"
 					className={
 						errors
-							? errors[`variation_value_template.${index}.name`]
+							? errors.code
 								? `form-control is-invalid`
 								: `form-control is-valid`
 							: "form-control"
 					}
-					id={`variation_value_template.${index}.name`}
-					name={`variation_value_template.${index}.name`}
-				
-					onChange={handleValueChange}
-					value={formData.variation_value_template[index].name}
+					id="code"
+					name="code"
+					onChange={handleChange}
+					value={formData.code}
 				/>
-				
-			
-				{errors && (
-				<>	
-				{
-					errors[`variation_value_template.${index}.name`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
-
-				}
-				
-				</>
-					
+				{errors?.code && (
+					<div className="invalid-feedback">{errors.code[0]}</div>
 				)}
-			
-
-				<br/>
-					</>
-					)})
-				}
-			
-		
+				{errors && <div className="valid-feedback">Looks good!</div>}
 
 			</div>
-			
-			<div className="text-center">
-			<button className="btn btn-danger me-2" 	type="button" onClick={deleteValue}>-</button>	
-			<button className="btn btn-primary" 	type="button" onClick={AddValue}>+</button>
-			
-			</div>
+	
+	
 		
 
 			<div className="text-center">
@@ -238,4 +166,4 @@ const invalidInputHandler = (error:any) => {
 	);
 };
 
-export default AddVariationTemplateForm;
+export default AddColorForm;

@@ -19,6 +19,8 @@ export enum ROUTE_LIST {
     listCategory="/admin/categories",
     createVariationTemplate="/admin/variation-templates/create",
     listVariationTemplate="/admin/variation-templates",
+    createColor="/admin/colors/create",
+    listColor="/admin/colors",
     createProduct="/admin/products/create",
     listProduct="/admin/products",
     createCoupon="/admin/coupon/create",

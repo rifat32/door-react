@@ -51,6 +51,8 @@ import AddVariationTemplatePage from "./pages/AdminPages/Product/Variation/AddVa
 import ListCouponPage from "./pages/AdminPages/Coupon/ListCouponPage";
 import AddCouponPage from "./pages/AdminPages/Coupon/AddCouponPage";
 import ListOrderPage from "./pages/AdminPages/Order/ListOrderPage";
+import ListColorPage from "./pages/AdminPages/Product/Color/ListColorPage";
+import AddColorPage from "./pages/AdminPages/Product/Color/AddColorPage";
 
 
 
@@ -147,6 +149,16 @@ export const RouteData: RouteInterface[] = [
 		path: ROUTE_LIST.createVariationTemplate,
 		exact: false,
 		component: AddVariationTemplatePage,
+	},
+	{
+		path: ROUTE_LIST.listColor,
+		exact: true,
+		component: ListColorPage,
+	},
+	{
+		path: ROUTE_LIST.createColor,
+		exact: false,
+		component: AddColorPage,
 	},
 	{
 		path: ROUTE_LIST.listCategory,

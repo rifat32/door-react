@@ -70,7 +70,12 @@ export const adminSideBarData: NavInterface[] = [
 
 			
 			{
-				name: "Variation",
+				name: "Color",
+				link: ROUTE_LIST.listColor,
+				permissions: [],
+			},
+			{
+				name: "Height && Width",
 				link: ROUTE_LIST.listVariationTemplate,
 				permissions: [],
 			},

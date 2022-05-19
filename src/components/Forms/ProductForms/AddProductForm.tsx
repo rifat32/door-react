@@ -18,11 +18,19 @@ interface FormData {
 	variation:Variation[];
     image:"";
 	images:string[];
+	colors:Colors[]
 
 }
 interface Variation {
 	variation_template_id:string;
 	variation_value_template:any;
+}
+interface Colors {
+	id: string;
+	name: string;
+	code: string;
+	color_id:string;
+	
 }
 const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 	const [formData, setFormData] = useState<FormData>({
@@ -42,10 +50,20 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 			}
 		],
 	    image: "",
-		images:[]
+		images:[],
+		colors:[
+			{
+				id:"",
+				name:"",
+				code:"",
+				color_id:"",
+			}
+		]
+		
 	});
 	const [imageFile, setImageFile] = useState<any>();
 	const [categories, setCategories] = useState([]);
+	const [colors, setColors] = useState([]);
 	const [variationTemplates, setVariationTemplates] = useState<any>([]);
 	const [productTypes, setProductTypes] = useState([
 		{
@@ -62,6 +80,7 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 	useEffect(() => {
 		loadCategories();
 		loadVariationTemplates();
+		loadColors();
 	}, []);
 	// pagination required
 	const loadCategories = () => {
@@ -70,6 +89,18 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 			.then((response: any) => {
 				console.log(response);
 				setCategories(response.data.data);
+			})
+			.catch((error) => {
+				console.log(error.response);
+			});
+	};
+	const loadColors = () => {
+
+		apiClient()
+			.get(`${BACKENDAPI}/v1.0/colors/all`)
+			.then((response: any) => {
+				console.log(response);
+				setColors(response.data.data);
 			})
 			.catch((error) => {
 				console.log(error.response);
@@ -204,17 +235,18 @@ for (var i = 0; i < files.length; i++)
 		setFormData({ ...formData,variation:tempValues });
 
 	};
-	const handleVariationPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleVariationValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
 		let index:number = parseInt(e.target.name.split(".")[1])
 		let vindex:number = parseInt(e.target.name.split(".")[3])
-		console.log(index,vindex)
+		let name:string = e.target.name.split(".")[4]
+		console.log(index,name)
 	
 
 		const tempValues =  JSON.parse(JSON.stringify(formData.variation)) 
 	
 	  console.log(tempValues)
-		tempValues[index].variation_value_template[vindex].price = e.target.value;
+		tempValues[index].variation_value_template[vindex][name]= e.target.value;
 		setFormData({ ...formData,variation:tempValues });
 
 	};
@@ -252,6 +284,59 @@ for (var i = 0; i < files.length; i++)
 		}
 	
 	};
+	const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		let index:number = parseInt(e.target.name.split(".")[1])
+		let name:string = e.target.name.split(".")[2]
+
+		
+	
+		const tempValues =  JSON.parse(JSON.stringify(formData.colors)) 
+		tempValues[index][name] = e.target.value;
+		setFormData({ ...formData,colors:tempValues });
+	};
+	const handleColorSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		let index:number = parseInt(e.target.name.split(".")[1])
+		
+        let value = e.target.value
+
+		if(value){
+			let color:any= colors.find((el:any) => {
+				return parseInt(el.id) == parseInt(value)
+			})
+		
+			const tempValues =  JSON.parse(JSON.stringify(formData.colors)) 
+			
+				tempValues[index].id = "";
+				tempValues[index].name = color.name;
+				tempValues[index].code = color.code;
+				tempValues[index].color_id = color.id;
+	
+			setFormData({ ...formData,colors:tempValues });
+		}
+	
+	};
+	const AddColor = () => {
+
+		const tempValues = [...formData.colors]
+		tempValues.push({
+			id:"",
+			name:"",
+			code:"",
+			color_id:"",
+		})
+		
+		setFormData({ ...formData,colors:tempValues });
+	};
+	const deleteColor = () => {
+
+		const tempValues = [...formData.colors]
+	
+		if(tempValues.length > 1){
+			tempValues.pop()
+		}
+		setFormData({ ...formData,colors:tempValues });
+		
+	};
 	const handleVariationValueAdd = (index:number) => {
 
 	
@@ -272,20 +357,7 @@ id:0,
 		 setFormData({ ...formData,variation:tempVariation });
 
 	};
-	const handleVariationQtyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
-		let index:number = parseInt(e.target.name.split(".")[1])
-		let vindex:number = parseInt(e.target.name.split(".")[3])
-		console.log(index,vindex)
-	
-
-		const tempValues =  JSON.parse(JSON.stringify(formData.variation)) 
-	
-	  console.log(tempValues)
-		tempValues[index].variation_value_template[vindex].qty = e.target.value;
-		setFormData({ ...formData,variation:tempValues });
-
-	};
 	const AddVariation = () => {
 
 		const tempValues =  JSON.parse(JSON.stringify(formData.variation)) 
@@ -316,7 +388,15 @@ id:0,
 		}
 		],
 	 image: "",
-	 images:[]
+	 images:[],
+	 colors:[
+		{
+			id:"",
+			name:"",
+			code:"",
+			color_id:"",
+		}
+	]
 		});
 	};
 	const handleSubmit = (e: React.FormEvent) => {
@@ -358,9 +438,9 @@ id:0,
 			.get(`${BACKENDAPI}/v1.0/products/${id}`)
 			.then((response: any) => {
 				console.log(response);
-				const {id,name,category_id,sku,description,type,product_variations,variations,image} = response.data.product
+				const {id,name,category_id,sku,description,type,product_variations,variations,image,colors} = response.data.product
 
-				
+					
 				
               let price = "";
 			  let qty = "";
@@ -385,7 +465,13 @@ id:0,
 			
 
 				console.log(tempVariation)
-
+			let tempColors = colors.map((el:any) => {
+				
+				el.name = el.color.name
+				el.code = el.color.code
+                return el;
+			})
+		
 
 				setFormData({
 				...formData,
@@ -398,7 +484,8 @@ id:0,
 				price,
 				qty,
 				variation:tempVariation,
-				image
+				image,
+				colors:tempColors
 				})
 				// setCategories(response.data.data);
 			})
@@ -406,6 +493,7 @@ id:0,
 				console.log(error);
 			});
 	};
+	
 	useEffect(() => {
 		if (props.type == "update") {
 			console.log(props.value)
@@ -681,7 +769,7 @@ id:0,
 				{/* head */}
 				<div className="row mb-2 ">
 					<div className="col-md-2 bg-success me-1">
-					 <div className="text-light">Variation</div>
+					 <div className="text-light">Height</div>
 					</div>
 					<div className="col-md-9 bg-success ">
 					<div className="text-light">Variation Values</div>
@@ -690,7 +778,7 @@ id:0,
 				{/* head 2 */}
 				{
 					formData.variation.map((el,index) => {
-					  return (<div className="row ">
+					  return (<div className="row " key={index}>
 					  <div className="col-md-2  me-1">
 					  <div className="">
 					  
@@ -731,7 +819,7 @@ id:0,
 					  </div>
 					  <div className="col-md-9 ">
 					  <div className="row ">
-									<div className="col-md-3 me-1   text-light bg-primary">Value</div>
+									<div className="col-md-3 me-1   text-light bg-primary">Width</div>
 									<div className="col-md-3 me-1 text-light bg-primary">Price</div>
 									<div className="col-md-3 me-1 text-light bg-primary">Quantity</div>
 									<div className="col-md-2">
@@ -744,7 +832,41 @@ id:0,
 							el.variation_value_template.length?(
 								el.variation_value_template.map((elv:any,vindex:any) => {
 									return 	(<div className="row mt-2">
-									<div className="col-md-3 me-1 ">{elv.name}</div>
+									{/* name start */}
+
+									<div className="col-md-3 me-1">
+								
+					<input
+						type="text"
+						className={
+							errors
+								? errors[`variation.${index}.variation_value_template.${vindex}.name`]
+									? `form-control is-invalid`
+									: `form-control is-valid`
+								: "form-control"
+						}
+						id={`variation.${index}.variation_value_template.${vindex}.name`}
+						name={`variation.${index}.variation_value_template.${vindex}.name`}
+						onChange={handleVariationValueChange}
+						value={formData.variation[index].variation_value_template[vindex].name}
+					/>
+					
+					
+					{errors && (
+				<>	
+				{
+					errors[`variation.${index}.variation_value_template.${vindex}.name`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
+
+				}
+				
+				</>
+					
+				)}
+					
+					
+					
+					</div>
+					{/* name end */}
 
 	{/* price start */}
 
@@ -761,7 +883,7 @@ id:0,
 						}
 						id={`variation.${index}.variation_value_template.${vindex}.price`}
 						name={`variation.${index}.variation_value_template.${vindex}.price`}
-						onChange={handleVariationPriceChange}
+						onChange={handleVariationValueChange}
 						value={formData.variation[index].variation_value_template[vindex].price}
 					/>
 					
@@ -795,7 +917,7 @@ id:0,
 									}
 									id={`variation.${index}.variation_value_template.${vindex}.qty`}
 									name={`variation.${index}.variation_value_template.${vindex}.qty`}
-									onChange={handleVariationQtyChange}
+									onChange={handleVariationValueChange}
 									value={formData.variation[index].variation_value_template[vindex].qty}
 								/>
 								
@@ -847,6 +969,160 @@ id:0,
 				
 				</div>):(null)
 			}
+			{/* 
+			 */}
+			 <br />
+			 <br />
+			 {/* colors */}
+			 <div className="row mt-5">
+				 <h4 className="text-center">
+					 Colors
+				 </h4>
+			 </div>
+			 <div className="row">
+				 <div className="col-md-8 offset-2">
+			 
+
+<div className="row">
+	<div className="col-md-3">
+		Colors
+	</div>
+	<div className="col-md-3">Name</div>
+	<div className="col-md-3">Code</div>
+</div>
+
+
+		 {
+					formData.colors.map( (el,index) => {
+						console.log(formData.colors[index].color_id)
+						return (
+				<div className="row mt-4 mb-4" key={index}>
+					{/* colors */}
+					<div className="col-md-3">
+					<select
+					className={
+						errors
+							? errors[`colors.${index}.color_id`]
+								? `form-control is-invalid`
+								: `form-control is-valid`
+							: "form-control"
+					}
+					id={`colors.${index}.color_id`}
+					name={`colors.${index}.color_id`}
+					onChange={handleColorSelect}
+
+					value={formData.colors[index].color_id}>
+					<option value="">Please Select</option>
+					{colors.map((el: any, index) => (
+						<option
+							key={index}
+							value={el.id}
+							style={{ textTransform: "uppercase" }}>
+							{el.name}
+						</option>
+					))}
+				</select>
+				{errors && (
+				<>	
+				{
+					errors[`variation_value_template.${index}.color_id`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
+
+				}
+				
+				</>
+					
+				)}
+					</div>
+				
+			{/*  color name */}
+			<div className="col-md-3">
+<input
+					type="text"
+					className={
+						errors
+							? errors[`colors.${index}.name`]
+								? `form-control is-invalid`
+								: `form-control is-valid`
+							: "form-control"
+					}
+					id={`colors.${index}.name`}
+					name={`colors.${index}.name`}
+				readOnly
+					onChange={handleColorChange}
+					value={formData.colors[index].name}
+				/>
+				
+			
+				{errors && (
+				<>	
+				{
+					errors[`variation_value_template.${index}.name`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
+
+				}
+				
+				</>
+					
+				)}
+			
+  
+				
+			</div>
+			{/* color code */}
+			<div className="col-md-3">
+<input
+					type="text"
+					className={
+						errors
+							? errors[`colors.${index}.code`]
+								? `form-control is-invalid`
+								: `form-control is-valid`
+							: "form-control"
+					}
+					id={`colors.${index}.code`}
+					name={`colors.${index}.code`}
+				readOnly
+					onChange={handleColorChange}
+					value={formData.colors[index].code}
+				/>
+				
+			
+				{errors && (
+				<>	
+				{
+					errors[`variation_value_template.${index}.code`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
+
+				}
+				
+				</>
+					
+				)}
+			
+
+			
+			</div>
+
+			<br />
+			</div>
+					
+					
+					)})
+				}
+
+
+
+
+				 </div>
+				 <div className="row">
+					 <div className="col-md-8 offset-2">
+					 <div className="text-center">
+			<button className="btn btn-danger me-2" 	type="button" onClick={deleteColor}>-</button>	
+			<button className="btn btn-primary" 	type="button" onClick={AddColor}>+</button>
+			
+			</div>
+					 </div>
+				 </div>
+			 </div>
+			 {/* end of colors */}
 		
 			<div className="text-center">
 				<button type="submit" className="btn btn-primary me-2">
