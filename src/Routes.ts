@@ -53,6 +53,8 @@ import AddCouponPage from "./pages/AdminPages/Coupon/AddCouponPage";
 import ListOrderPage from "./pages/AdminPages/Order/ListOrderPage";
 import ListColorPage from "./pages/AdminPages/Product/Color/ListColorPage";
 import AddColorPage from "./pages/AdminPages/Product/Color/AddColorPage";
+import ListStylePage from "./pages/AdminPages/Product/Style/ListStylePage";
+import AddStylePage from "./pages/AdminPages/Product/Style/AddStylePage";
 
 
 
@@ -169,6 +171,16 @@ export const RouteData: RouteInterface[] = [
 		path: ROUTE_LIST.createCategory,
 		exact: false,
 		component: AddCategoryPage,
+	},
+	{
+		path: ROUTE_LIST.listStyle,
+		exact: true,
+		component: ListStylePage,
+	},
+	{
+		path: ROUTE_LIST.createStyle,
+		exact: false,
+		component: AddStylePage,
 	},
 	{
 		path: ROUTE_LIST.listCoupon,

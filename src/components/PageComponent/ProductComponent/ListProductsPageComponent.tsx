@@ -37,7 +37,7 @@ const ListProductsPageComponent: React.FC = () => {
 	};
 	const [currentData, setCurrentData] = useState<any>(null);
 
-	const [link, setLink] = useState(`${BACKENDAPI}/v1.0/products`);
+	
 	const [nextPageLink, setNextPageLink] = useState("");
 	const [prevPageLink, setPrevPageLink] = useState("");
 
@@ -117,8 +117,12 @@ const ListProductsPageComponent: React.FC = () => {
 				set_current_page(response.data.products.current_page)
 				console.log(response.data.products);
 				const tempData = response.data.products.data.map((el:any) => {
-el.checked = false;
-return el;
+         el.checked = false;
+		 el.qty = 0;
+		 el.variations.map((el2:any) => {
+			el.qty += el2.qty
+		 })
+         return el;
 				})
 				setData(tempData);
 
@@ -166,11 +170,11 @@ return el;
 		setData(tempData)
 	}
 	const handleChecked = (e: React.ChangeEvent<HTMLInputElement>) => {
-		let vid = e.target.value.split("_")[1]
+		let id = e.target.value.split("_")[1]
 		console.log(e.target.checked)
 		const tempData = data.map((el: any) => {
-			console.log(el.vid,parseInt(vid))
-			if (parseInt(el.vid) === parseInt(vid)) {
+			console.log(el.id,parseInt(id))
+			if (parseInt(el.id) === parseInt(id)) {
 
 				el.checked = e.target.checked
 				console.log(e.target.checked)
@@ -249,7 +253,7 @@ return el;
 		data.map((el:any) => {
 			if(el.checked){
 				tempData.push({
-					vid:el.vid,
+					id:el.id,
 				})
 			}
            
@@ -269,8 +273,6 @@ return el;
 				if(el.checked){
 					tempData.push({
 						id:el.id,
-						vid:el.vid
-	
 					})
 				}
 			   
@@ -279,7 +281,7 @@ return el;
 			  toast.error("Please select first")   
 			} else {
 				apiClient()
-				.put(`${BACKENDAPI}/v1.0/products/bulkedit/delete`,{variations:tempData})
+				.put(`${BACKENDAPI}/v1.0/products/bulkedit/delete`,{products:tempData})
 				.then((response: any) => {
 					// console.log(response);
 					// const tempDatas = data.filter((el: any) => {
@@ -338,10 +340,9 @@ return el;
 						<th scope="col">Type</th>
 						<th scope="col">Category</th>
 						<th scope="col">Sku</th>
-						<th scope="col">Variation Name</th>
-						<th scope="col">Variation</th>
-						<th scope="col">Price</th>
 						<th scope="col">Quantity</th>
+						<th scope="col">Status</th>
+						<th scope="col">Featured</th>
 						<th scope="col">Action</th>
 					</tr>
 				</thead>
@@ -349,7 +350,7 @@ return el;
 					<tbody>
 						{data.map((el: any) => {
 							return (
-								<tr key={el.vid}>
+								<tr key={el.id}>
 									<td>
 										<div className="form-check" >
 											<input
@@ -357,7 +358,7 @@ return el;
 												type="checkbox"
 												id={`check_${el.id}`}
 												name="chech"
-												value={`check_${el.vid}`}
+												value={`check_${el.id}`}
 												onChange={handleChecked}
 												checked={el.checked}
 											/>
@@ -375,11 +376,10 @@ return el;
 									<td>{el.type && el.type}</td>
 									<td>{el.category && el.category}</td>
 									<td>{el.sku && el.sku}</td>
-									<td>{el.vname && el.vname}</td>
-									<td>{el.vname && el.vvalue}</td>
-									{/* <td>{el.pQuantity}</td> */}
-									<td>{el.price && el.price}</td>
+									
 									<td>{el.qty && el.qty}</td>
+									<td>{el.status && el.status}</td>
+									<td>{el.is_featured ? "yes":"no"}</td>
 									<td>
 										<div className="btn-group">
 											<button
@@ -407,7 +407,7 @@ return el;
 												<li>
 													<a
 														onClick={() => {
-															deleteData(el.vid);
+															deleteData(el.id);
 														}}
 														className="dropdown-item"
 														href="#">
@@ -509,7 +509,7 @@ return el;
 			<CustomModal
 				isOpen={priceModalIsOpen}
 				showModal={showPriceModal}
-				type="Update Product">
+				type="Update Price">
 				<EditPriceForm
 					value={currentPriceData}
 					updateDataStates={updateDataStates}

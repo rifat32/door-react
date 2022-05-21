@@ -6,30 +6,16 @@ import { UpdateFormInterface } from "../../../interfaces/UpdateFormInterfaced";
 import { ErrorMessage } from "../../../utils/ErrorMessage";
 
 interface FormData {
-	type: string;
-	amount: string;
-	products:any[]
+	name: string;
 }
 
-const EditPriceForm: React.FC<UpdateFormInterface> = (props) => {
+const AddStyleForm: React.FC<UpdateFormInterface> = (props) => {
 	const [formData, setFormData] = useState<FormData>({
-	type: "fixed",
-	amount: "",
-	products:[]
+	name: "",
 	});
 	
 	const [errors, setErrors] = useState<any>(null);
 
-	const types = [
-		{
-			id:1,
-			value:"fixed"
-		},
-		{
-			id:2,
-			value:"percentage"
-		}
-	]
 const invalidInputHandler = (error:any) => {
 	if (error.status === 422) {
 		setErrors(error.data.errors);
@@ -39,14 +25,10 @@ const invalidInputHandler = (error:any) => {
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
-	const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		setFormData({ ...formData, [e.target.name]: e.target.value });
-	};
+
 	const resetFunction = () => {
 		setFormData({
-			type: "",
-			amount: "",
-			products:[]
+			name: ""
 		});
 	};
 	const handleSubmit = (e: React.FormEvent) => {
@@ -55,12 +37,12 @@ const invalidInputHandler = (error:any) => {
 		if (props.type === "update") {
 			updateData();
 		} else {
-			// createData();
+			createData();
 		}
 	};
 	const createData = () => {
 		apiClient()
-			.post(`${BACKENDAPI}/v1.0/categories`, { ...formData })
+			.post(`${BACKENDAPI}/v1.0/styles`, { ...formData })
 			.then((response) => {
 				console.log(response);
 				toast.success("Data saved");
@@ -78,18 +60,16 @@ const invalidInputHandler = (error:any) => {
 	// edit data section
 	useEffect(() => {
 		if (props.type == "update") {
-			console.log(props)
-			setFormData({...formData,products:props.value});
+			setFormData(props.value);
 		}
 	}, []);
 	const updateData = () => {
-		console.log(formData)
-	
 		apiClient()
-			.put(`${BACKENDAPI}/v1.0/products/bulkedit/price`, { ...formData })
+			.put(`${BACKENDAPI}/v1.0/styles`, { ...formData })
 			.then((response: any) => {
 				console.log(response);
 				toast.success("Data Updated");
+
 				props.updateDataStates(response.data.data);
 				props.showModal(false);
 			})
@@ -106,60 +86,30 @@ const invalidInputHandler = (error:any) => {
 	return (
 		<form className="row g-3" onSubmit={handleSubmit}>
 		
-		<div className="col-md-4">
-				<label htmlFor="type" className="form-label">
-				Type
-				</label>
-				<select
-					className={
-						errors
-							? errors.type
-								? `form-control is-invalid`
-								: `form-control is-valid`
-							: "form-control"
-					}
-					id="type"
-					name="type"
-					onChange={handleSelect}
-					value={formData.type}>
-				
-					{types.map((el, index) => (
-						<option
-							key={index}
-							value={el.value}
-							style={{ textTransform: "uppercase" }}>
-							{el.value}
-						</option>
-					))}
-				</select>
-				{errors?.type && (
-					<div className="invalid-feedback">{errors.type[0]}</div>
-				)}
-				{errors && <div className="valid-feedback">Looks good!</div>}
-			</div>
 			<div className="col-md-4">
-				<label htmlFor="amount" className="form-label">
-				Amount
+				<label htmlFor="name" className="form-label">
+					 Name
 				</label>
 				<input
 					type="text"
 					className={
 						errors
-							? errors.amount
+							? errors.name
 								? `form-control is-invalid`
 								: `form-control is-valid`
 							: "form-control"
 					}
-					id="amount"
-					name="amount"
+					id="name"
+					name="name"
 					onChange={handleChange}
-					value={formData.amount}
+					value={formData.name}
 				/>
-				{errors?.amount && (
-					<div className="invalid-feedback">{errors.amount[0]}</div>
+				{errors?.name && (
+					<div className="invalid-feedback">{errors.name[0]}</div>
 				)}
 				{errors && <div className="valid-feedback">Looks good!</div>}
 			</div>
+		
 		
 		
 
@@ -178,4 +128,4 @@ const invalidInputHandler = (error:any) => {
 	);
 };
 
-export default EditPriceForm;
+export default AddStyleForm;

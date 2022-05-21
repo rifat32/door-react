@@ -78,6 +78,12 @@ export const adminSideBarData: NavInterface[] = [
 				name: "Height && Width",
 				link: ROUTE_LIST.listVariationTemplate,
 				permissions: [],
+			}
+			,
+			{
+				name: "Style",
+				link: ROUTE_LIST.listStyle,
+				permissions: [],
 			},
 			{
 				name: "Category",

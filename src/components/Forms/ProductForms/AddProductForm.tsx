@@ -10,13 +10,16 @@ interface FormData {
 	id:string;
 	name: string;
 	category_id: string;
+	style_id: string;
 	sku: string;
 	description: string;
 	type: string;
 	price: string;
 	qty: string;
+	status: string;
 	variation:Variation[];
     image:"";
+	is_featured:string;
 	images:string[];
 	colors:Colors[]
 
@@ -40,8 +43,11 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 		sku: "",
 		type: "single",
 		category_id: "",
+		style_id: "",
 		price: "",
 		qty: "",
+		status:"active",
+		is_featured:"0",
 		variation:[
 			{
 				variation_template_id:"",
@@ -63,6 +69,8 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 	});
 	const [imageFile, setImageFile] = useState<any>();
 	const [categories, setCategories] = useState([]);
+	const [styles, setStyles] = useState([]);
+	
 	const [colors, setColors] = useState([]);
 	const [variationTemplates, setVariationTemplates] = useState<any>([]);
 	const [productTypes, setProductTypes] = useState([
@@ -79,6 +87,7 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 
 	useEffect(() => {
 		loadCategories();
+		loadStyles();
 		loadVariationTemplates();
 		loadColors();
 	}, []);
@@ -89,6 +98,17 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 			.then((response: any) => {
 				console.log(response);
 				setCategories(response.data.data);
+			})
+			.catch((error) => {
+				console.log(error.response);
+			});
+	};
+	const loadStyles = () => {
+		apiClient()
+			.get(`${BACKENDAPI}/v1.0/styles/all`)
+			.then((response: any) => {
+				console.log(response);
+				setStyles(response.data.data);
 			})
 			.catch((error) => {
 				console.log(error.response);
@@ -226,6 +246,7 @@ for (var i = 0; i < files.length; i++)
 		el.id = 0
          el.price = 0;
 		 el.qty = 0;
+		 el.sub_sku = "";
 		 return el;
 	   })
 
@@ -350,7 +371,8 @@ for (var i = 0; i < files.length; i++)
 id:0,
 		name:"dummy",
 		price:0,
-		qty:0
+		qty:0,
+		sub_sku:""
 	})
 	
 		
@@ -379,8 +401,11 @@ id:0,
 		sku: "",
 		type: "single",
 		category_id: "",
+		style_id: "",
 		price: "",
 		qty: "",
+		status:"active",
+		is_featured:"0",
 		variation:[
 			{
 				variation_template_id:"",
@@ -438,7 +463,7 @@ id:0,
 			.get(`${BACKENDAPI}/v1.0/products/${id}`)
 			.then((response: any) => {
 				console.log(response);
-				const {id,name,category_id,sku,description,type,product_variations,variations,image,colors} = response.data.product
+				const {id,name,category_id,style_id,sku,description,type,product_variations,variations,image,colors,status,is_featured} = response.data.product
 
 					
 				
@@ -448,6 +473,7 @@ id:0,
 				if(type === "single"){
                    price = variations[0].price
 				   qty = variations[0].qty
+				   
 				} else {
 					tempVariation = product_variations.map((el:any) => {
 
@@ -466,7 +492,6 @@ id:0,
 
 				console.log(tempVariation)
 			let tempColors = colors.map((el:any) => {
-				
 				el.name = el.color.name
 				el.code = el.color.code
                 return el;
@@ -478,6 +503,7 @@ id:0,
 				id,
 				name,
 				category_id,
+				style_id,
 				sku,
 				description,
 				type,
@@ -485,7 +511,9 @@ id:0,
 				qty,
 				variation:tempVariation,
 				image,
-				colors:tempColors
+				colors:tempColors,
+				status,
+				is_featured
 				})
 				// setCategories(response.data.data);
 			})
@@ -580,6 +608,37 @@ id:0,
 				{errors && <div className="valid-feedback">Looks good!</div>}
 			</div>
 			<div className="col-md-4">
+				<label htmlFor="style_id" className="form-label">
+					Style
+				</label>
+				<select
+					className={
+						errors
+							? errors.style_id
+								? `form-control is-invalid`
+								: `form-control is-valid`
+							: "form-control"
+					}
+					id="style_id"
+					name="style_id"
+					onChange={handleSelect}
+					value={formData.style_id}>
+					<option value="">Please Select</option>
+					{styles.map((el: any, index) => (
+						<option
+							key={index}
+							value={el.id}
+							style={{ textTransform: "uppercase" }}>
+							{el.name}
+						</option>
+					))}
+				</select>
+				{errors?.style_id && (
+					<div className="invalid-feedback">{errors.style_id[0]}</div>
+				)}
+				{errors && <div className="valid-feedback">Looks good!</div>}
+			</div>
+			<div className="col-md-4">
 				<label htmlFor="sku" className="form-label">
 					SKU
 				</label>
@@ -602,8 +661,56 @@ id:0,
 				)}
 				{errors && <div className="valid-feedback">Looks good!</div>}
 			</div>
-
-		
+			<div className="col-md-4">
+				<label htmlFor="status" className="form-label">
+					Status
+				</label>
+				<select
+					className={
+						errors
+							? errors.status
+								? `form-control is-invalid`
+								: `form-control is-valid`
+							: "form-control"
+					}
+					id="status"
+					name="status"
+					onChange={handleSelect}
+					value={formData.status}>
+					<option value="active">active</option>
+					<option value="inactive">inactive</option>
+					<option value="draft">draft</option>
+					
+				</select>
+				{errors?.category_id && (
+					<div className="invalid-feedback">{errors.category_id[0]}</div>
+				)}
+				{errors && <div className="valid-feedback">Looks good!</div>}
+			</div>
+			<div className="col-md-4">
+				<label htmlFor="is_featured" className="form-label">
+					Featured Product
+				</label>
+				<select
+					className={
+						errors
+							? errors.is_featured
+								? `form-control is-invalid`
+								: `form-control is-valid`
+							: "form-control"
+					}
+					id="is_featured"
+					name="is_featured"
+					onChange={handleSelect}
+					value={formData.is_featured}>
+					<option value={1}>yes</option>
+					<option value={0}>no</option>
+				</select>
+				{errors?.is_featured && (
+					<div className="invalid-feedback">{errors.is_featured[0]}</div>
+				)}
+				{errors && <div className="valid-feedback">Looks good!</div>}
+			</div>
 			<div className="col-md-12">
 				<label htmlFor="description" className="form-label">
 					Description
@@ -720,7 +827,7 @@ id:0,
 					Price
 				</label>
 				<input
-					type="number"
+					type="text"
 					className={
 						errors
 							? errors.price
@@ -745,7 +852,7 @@ id:0,
 					Quantity
 				</label>
 				<input
-					type="number"
+					type="text"
 					className={
 						errors
 							? errors.qty
@@ -819,10 +926,12 @@ id:0,
 					  </div>
 					  <div className="col-md-9 ">
 					  <div className="row ">
-									<div className="col-md-3 me-1   text-light bg-primary">Width</div>
-									<div className="col-md-3 me-1 text-light bg-primary">Price</div>
-									<div className="col-md-3 me-1 text-light bg-primary">Quantity</div>
-									<div className="col-md-2">
+									<div className="col-md-2 me-1   text-light bg-primary">Width</div>
+									<div className="col-md-2  me-1 text-light bg-primary">Price</div>
+									<div className="col-md-2 me-1  text-light bg-primary">Quantity</div>
+									<div className="col-md-2  me-1
+									 text-light bg-primary">Sku</div>
+									<div className="col-md-2 me-1">
 								<button className="btn  btn-primary"
 								//  style={{height:"0.1rem"}}
 								  	type="button" onClick={() => handleVariationValueAdd(index)}>+</button>	
@@ -832,9 +941,9 @@ id:0,
 							el.variation_value_template.length?(
 								el.variation_value_template.map((elv:any,vindex:any) => {
 									return 	(<div className="row mt-2">
-									{/* name start */}
+					{/* name start */}
 
-									<div className="col-md-3 me-1">
+									<div className="col-md-2 me-1">
 								
 					<input
 						type="text"
@@ -870,10 +979,10 @@ id:0,
 
 	{/* price start */}
 
-									<div className="col-md-3 me-1">
+									<div className="col-md-2 me-1">
 								
 					<input
-						type="number"
+						type="text"
 						className={
 							errors
 								? errors[`variation.${index}.variation_value_template.${vindex}.price`]
@@ -904,10 +1013,10 @@ id:0,
 					</div>
 					{/* price end */}
 	{/* quantity start */}
-					<div className="col-md-3 me-1">
+					<div className="col-md-2 me-1">
 								
 								<input
-									type="number"
+									type="text"
 									className={
 										errors
 											? errors[`variation.${index}.variation_value_template.${vindex}.qty`]
@@ -937,6 +1046,40 @@ id:0,
 								
 								</div>
 {/* quantity end */}
+{/*  sku start */}
+<div className="col-md-2 me-1">
+								
+								<input
+									type="text"
+									className={
+										errors
+											? errors[`variation.${index}.variation_value_template.${vindex}.sub_sku`]
+												? `form-control is-invalid`
+												: `form-control is-valid`
+											: "form-control"
+									}
+									id={`variation.${index}.variation_value_template.${vindex}.sub_sku`}
+									name={`variation.${index}.variation_value_template.${vindex}.sub_sku`}
+									onChange={handleVariationValueChange}
+									value={formData.variation[index].variation_value_template[vindex].sub_sku}
+								/>
+								
+								
+								{errors && (
+							<>	
+							{
+								errors[`variation.${index}.variation_value_template.${vindex}.sub_sku`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
+			
+							}
+							
+							</>
+								
+							)}
+								
+								
+								
+								</div>
+{/* sku end */}
 
 								<div className="col-md-2">
 								<button className="btn  btn-danger"
