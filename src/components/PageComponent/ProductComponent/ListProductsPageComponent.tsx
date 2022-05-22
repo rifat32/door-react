@@ -23,6 +23,7 @@ const ListProductsPageComponent: React.FC = () => {
 	const [links, setLinks] = useState<(Links[] | null)>(null)
 
 	const [current_page, set_current_page] = useState(0)
+	
 	const [data, setData] = useState<any>([]);
 	const [modalIsOpen, setIsOpen] = React.useState(false);
 	const [priceModalIsOpen, setIsPriceModalOpen] = React.useState(false);
