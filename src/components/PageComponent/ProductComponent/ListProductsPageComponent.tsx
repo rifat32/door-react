@@ -247,6 +247,7 @@ const ListProductsPageComponent: React.FC = () => {
 		}
 	}
 	const [currentPriceData, setCurrentPriceData] = useState<any>(null);
+	
 	const bulkPriceEdit = () => {
 
 

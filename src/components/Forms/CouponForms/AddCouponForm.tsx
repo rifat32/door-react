@@ -34,7 +34,7 @@ const AddCouponForm: React.FC<UpdateFormInterface> = (props) => {
 	const [errors, setErrors] = useState<any>(null);
 	// ############################# products
 	const [loading, setLoading] = useState(false);
-	const [perPage, setPerPage] = useState(9)
+	const [perPage, setPerPage] = useState(2)
 	const [from, setFrom] = useState(null)
 	const [to, setTo] = useState(null)
 	const [total, setTotal] = useState(null)
@@ -43,7 +43,7 @@ const AddCouponForm: React.FC<UpdateFormInterface> = (props) => {
 
 	const [links, setLinks] = useState<(Links[] | null)>(null)
 
-	const [current_page, set_current_page] = useState(0)
+	const [current_page, set_current_page] = useState(1)
 	const [data, setData] = useState<any>([]);
 	const [currentData, setCurrentData] = useState<any>(null);
 
@@ -64,8 +64,17 @@ const AddCouponForm: React.FC<UpdateFormInterface> = (props) => {
 		setLoading(true)
 		if(select){
 			let tempSelectedData = data.filter((el:any) => {
-				return el.checked === true;
-					});
+				let got = false;
+				selectedData.map((el2:any) => {
+					if(parseInt(el2.id) == parseInt(el.id)) {
+						got = true
+					}
+			})
+				return el.checked === true && !got;
+
+				});
+
+			 
 					setSelectedData((prevData:any) => {
 					  return [...prevData,
 				...tempSelectedData];
@@ -83,8 +92,9 @@ const AddCouponForm: React.FC<UpdateFormInterface> = (props) => {
 			url = urlOrPerPage.replace("http", "http");
 
 		} else {
-			url = `${BACKENDAPI}/v1.0/products/pagination/${urlOrPerPage}?category=${formData.category_id}`
+			url = `${BACKENDAPI}/v1.0/products/pagination/${urlOrPerPage}?page=${current_page}&&category=${formData.category_id}`
 		}
+		
 		apiClient()
 			.get(url)
 			.then((response: any) => {
@@ -158,6 +168,16 @@ if(selected) {
 					el.checked = e.target.checked
 					console.log(e.target.checked)
 				}
+				if(!e.target.checked) {
+		
+					const selectedProduct =	selectedData.filter((el:any) => {
+								return parseInt(el.id) !== parseInt(id)
+						})
+						
+						setSelectedData(selectedProduct)
+					} else {
+						// setFormData({...formData,selectedProduct:[...formData.selectedProduct,selectedItem]})
+					}
 				return el
 			})
 			setData(tempData)

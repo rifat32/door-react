@@ -33,6 +33,7 @@ interface Colors {
 	name: string;
 	code: string;
 	color_id:string;
+	color_image:string,
 	
 }
 const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
@@ -62,7 +63,9 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 				id:"",
 				name:"",
 				code:"",
+				
 				color_id:"",
+				color_image:""
 			}
 		]
 		
@@ -315,6 +318,49 @@ for (var i = 0; i < files.length; i++)
 		tempValues[index][name] = e.target.value;
 		setFormData({ ...formData,colors:tempValues });
 	};
+	const handleColorImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	
+		if (!e.target.files) {
+			return;
+		  }
+		 
+		let file = e.target.files[0]
+		setImageFile(file)
+
+            let data:any = new FormData();
+            data.append('image', file, file.name);
+            apiClient().post(`${BACKENDAPI}/v1.0/image/upload/single/product`, data, {
+                headers: {
+                    'accept': 'application/json',
+                    'Accept-Language': 'en-US,en;q=0.8',
+                    'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
+                }
+            })
+			.then((response: any) => {
+				console.log(response);
+
+				let index:number = parseInt(e.target.name.split(".")[1])
+				let name:string = e.target.name.split(".")[2]
+		
+				
+			
+				const tempValues =  JSON.parse(JSON.stringify(formData.colors)) 
+				tempValues[index][name] = response.data.image;
+				setFormData({ ...formData,colors:tempValues });
+
+	
+
+
+
+
+
+			})
+			.catch((error) => {
+				console.log(error.response);
+			});
+
+		
+	  };
 	const handleColorSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		let index:number = parseInt(e.target.name.split(".")[1])
 		
@@ -344,6 +390,7 @@ for (var i = 0; i < files.length; i++)
 			name:"",
 			code:"",
 			color_id:"",
+			color_image:"",
 		})
 		
 		setFormData({ ...formData,colors:tempValues });
@@ -420,6 +467,7 @@ id:0,
 			name:"",
 			code:"",
 			color_id:"",
+			color_image:"",
 		}
 	]
 		});
@@ -1132,6 +1180,7 @@ id:0,
 	</div>
 	<div className="col-md-3">Name</div>
 	<div className="col-md-3">Code</div>
+	<div className="col-md-3">Image</div>
 </div>
 
 
@@ -1168,7 +1217,7 @@ id:0,
 				{errors && (
 				<>	
 				{
-					errors[`variation_value_template.${index}.color_id`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
+					errors[`colors.${index}.color_id`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
 
 				}
 				
@@ -1199,7 +1248,7 @@ id:0,
 				{errors && (
 				<>	
 				{
-					errors[`variation_value_template.${index}.name`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
+					errors[`colors.${index}.name`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
 
 				}
 				
@@ -1232,7 +1281,7 @@ id:0,
 				{errors && (
 				<>	
 				{
-					errors[`variation_value_template.${index}.code`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
+					errors[`colors.${index}.code`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
 
 				}
 				
@@ -1243,7 +1292,42 @@ id:0,
 
 			
 			</div>
+{/* end color code */}
+{/* color image */}
 
+<div className="col-md-3">
+<input
+					type="file"
+					className={
+						errors
+							? errors[`colors.${index}.color_image`]
+								? `form-control is-invalid`
+								: `form-control is-valid`
+							: "form-control"
+					}
+					id={`colors.${index}.color_image`}
+					name={`colors.${index}.color_image`}
+				readOnly
+					onChange={handleColorImageChange}
+					
+				/>
+				
+			
+				{errors && (
+				<>	
+				{
+					errors[`colors.${index}.color_image`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
+
+				}
+				
+				</>
+					
+				)}
+			
+
+			
+			</div>
+{/* end color image */}
 			<br />
 			</div>
 					
