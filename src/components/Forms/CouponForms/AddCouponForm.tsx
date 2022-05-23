@@ -183,6 +183,19 @@ if(selected) {
 			setData(tempData)
 		}
 		const setLinksView = (el: Links, index: number, arr: object[]) => {
+
+			let params = `${BACKENDAPI}/v1.0/products/pagination/${perPage}?page=${current_page}&&category=${formData.category_id}`.split("?")[1];
+   
+        let paramsArray = params.split("&&")
+        let finalParamsArray = paramsArray.filter(el => {
+          return el.split("=")[0] !== "page"
+         
+        })
+        params =   finalParamsArray.join("&&")
+        el.url += `&&${params}`
+
+
+
 			if (el.label == "&laquo; Previous") {
 				if (el.url) {
 					return <li key={index} className="page-item"><button type="button" className="page-link" onClick={() =>
