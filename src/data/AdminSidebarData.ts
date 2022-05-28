@@ -1,32 +1,32 @@
 import { NavInterface } from "../interfaces/AdminSideBarInterface";
 import { ROUTE_LIST } from "../RoutConstants";
 export const adminSideBarData: NavInterface[] = [
-	{
-		name: "Master Setup",
+	// {
+	// 	name: "Master Setup",
 
-		list: [
-			{
-				name: "Create Wing",
-				link: "/admin/wings/create",
-				permissions: [],
-			},
-			{
-				name: "Wings",
-				link: "/admin/wings",
-				permissions: [],
-			},
-			{
-				name: "Create Bank",
-				link: "/admin/banks/create",
-				permissions: [],
-			},
-			{
-				name: "Banks",
-				link: "/admin/banks",
-				permissions: [],
-			},
-		],
-	},
+	// 	list: [
+	// 		{
+	// 			name: "Create Wing",
+	// 			link: "/admin/wings/create",
+	// 			permissions: [],
+	// 		},
+	// 		{
+	// 			name: "Wings",
+	// 			link: "/admin/wings",
+	// 			permissions: [],
+	// 		},
+	// 		{
+	// 			name: "Create Bank",
+	// 			link: "/admin/banks/create",
+	// 			permissions: [],
+	// 		},
+	// 		{
+	// 			name: "Banks",
+	// 			link: "/admin/banks",
+	// 			permissions: [],
+	// 		},
+	// 	],
+	// },
 	{
 		name: "User Management",
 		list: [
