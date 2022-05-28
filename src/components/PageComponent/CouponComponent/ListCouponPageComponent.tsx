@@ -111,7 +111,7 @@ return <>
 									<td>{el.discount && el.discount} %</td>
 									<td>{el.expire_date && el.expire_date}</td>
 									<td>{el.expire_date && calculateDate(el.expire_date)}</td>
-									<td>{ (el.is_active?(<div className="text-success">Active</div>):(<div className="text-danger">Deactive</div>))}</td>
+									<td>{ (parseInt(el.is_active)?(<div className="text-success">Active</div>):(<div className="text-danger">Deactive</div>))}</td>
 									<td>
 										<div className="btn-group">
 											<button

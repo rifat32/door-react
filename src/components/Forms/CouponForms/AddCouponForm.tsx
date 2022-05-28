@@ -60,19 +60,23 @@ const AddCouponForm: React.FC<UpdateFormInterface> = (props) => {
 		
 		loadData(perPage,false);
 	}, [formData.category_id,formData.is_all_category_product]);
+	const getSelectedData = () => {
+		let tempSelectedData =	data.filter((el:any) => {
+			let got = false;
+			selectedData.map((el2:any) => {
+				if(parseInt(el2.id) == parseInt(el.id)) {
+					got = true
+				}
+		})
+			return el.checked === true && !got;
+
+			});
+			return tempSelectedData;
+	}
 	const loadData = (urlOrPerPage: (number | string),select=true) => {
 		setLoading(true)
 		if(select){
-			let tempSelectedData = data.filter((el:any) => {
-				let got = false;
-				selectedData.map((el2:any) => {
-					if(parseInt(el2.id) == parseInt(el.id)) {
-						got = true
-					}
-			})
-				return el.checked === true && !got;
-
-				});
+			let tempSelectedData = getSelectedData();
 
 			 
 					setSelectedData((prevData:any) => {
@@ -315,8 +319,13 @@ loadCategories()
 		}
 	};
 	const createData = () => {
+
+		const finalSelectedProducts = [...getSelectedData(),...selectedData]
+
+
+
 		apiClient()
-			.post(`${BACKENDAPI}/v1.0/coupons`, { ...formData })
+			.post(`${BACKENDAPI}/v1.0/coupons`, { ...formData,finalSelectedProducts })
 			.then((response) => {
 				console.log(response);
 				toast.success("Data saved");

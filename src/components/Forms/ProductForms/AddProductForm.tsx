@@ -496,7 +496,7 @@ id:0,
 			.then((response) => {
 				console.log(response);
 				toast.success("Data saved");
-				resetFunction();
+				// resetFunction();
 			})
 			.catch((error) => {
 				console.log(error.response);
