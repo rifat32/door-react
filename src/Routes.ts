@@ -148,6 +148,14 @@ export const RouteData: RouteInterface[] = [
 		component: ListVariationTemplatePage,
 	},
 	{
+		path: ROUTE_LIST.duplicateVariationTemplate,
+		exact: true,
+		component: AddVariationTemplatePage,
+		props:{
+			type:"duplicate"
+		}
+	},
+	{
 		path: ROUTE_LIST.createVariationTemplate,
 		exact: false,
 		component: AddVariationTemplatePage,
@@ -192,6 +200,12 @@ export const RouteData: RouteInterface[] = [
 		exact: false,
 		component: AddCouponPage,
 	},
+	{
+		path: ROUTE_LIST.editCoupon,
+		exact: true,
+		component: AddCouponPage,
+	},
+	
 	{
 		path: ROUTE_LIST.listOrder,
 		exact: true,

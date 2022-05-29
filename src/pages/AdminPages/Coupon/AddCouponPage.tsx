@@ -5,7 +5,7 @@ import AdminPageComponent from "../../../components/PageComponent/AdminPageCompo
 
 
 
-const AddCouponPage: React.FC = () => {
+const AddCouponPage: React.FC = (props:any) => {
 	return (
 		<AdminPageComponent>
 			<main id="main" className="main">
@@ -28,8 +28,11 @@ const AddCouponPage: React.FC = () => {
 							<div className="card">
 								<div className="card-body">
 									<h5 className="card-title">Add Coupon</h5>
-
-								 <AddCouponForm /> 
+									{
+	props.match.params.id?( <AddCouponForm type="update" value={props.match.params.id} />  ):
+	<AddCouponForm type="create"  /> 
+}
+								 
 								</div>
 							</div>
 						</div>

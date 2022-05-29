@@ -19,7 +19,8 @@ interface TemplateValue {
 
 }
 
-const AddVariationTemplateForm: React.FC<UpdateFormInterface> = (props) => {
+const AddVariationTemplateForm: React.FC<UpdateFormInterface> = (props:any) => {
+	console.log(props)
 	const [formData, setFormData] = useState<FormData>({
 		id:"",
 	name: "",
@@ -119,6 +120,18 @@ const invalidInputHandler = (error:any) => {
 	useEffect(() => {
 		if (props.type == "update") {
 			setFormData(props.value);
+		}
+		else if(props.type == "duplicate"){
+			apiClient()
+			.get(`${BACKENDAPI}/v1.0/variation-templates/${props.value}`)
+			.then((response:any) => {
+				console.log(response.data.data);
+				setFormData(response.data.data);
+			})
+			.catch((error) => {
+				console.log(error.response);
+			
+			});
 		}
 	}, []);
 	const updateData = () => {

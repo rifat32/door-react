@@ -1,11 +1,14 @@
 import React from "react";
+import { useParams } from "react-router-dom";
 import AddCategoryForm from "../../../../components/Forms/ProductForms/AddCategoryForm";
 import AddVariationTemplateForm from "../../../../components/Forms/ProductForms/AddVariationTemplateForm";
 import AdminPageComponent from "../../../../components/PageComponent/AdminPageComponent";
 
 
 
-const AddCategoryPage: React.FC = () => {
+const AddCategoryPage: React.FC = (props:any) => {
+	
+
 	return (
 		<AdminPageComponent>
 			<main id="main" className="main">
@@ -28,8 +31,11 @@ const AddCategoryPage: React.FC = () => {
 							<div className="card">
 								<div className="card-body">
 									<h5 className="card-title">Add Variation Template</h5>
-
-								 <AddVariationTemplateForm /> 
+{
+	props.match.params.id?(<AddVariationTemplateForm 	type="duplicate" value={props.match.params.id}/> ):
+	<AddVariationTemplateForm 	type="create" /> 
+}
+								 
 								</div>
 							</div>
 						</div>

@@ -5,6 +5,7 @@ import CustomModal from "../../Modal/Modal";
 import { toast } from "react-toastify";
 
 import AddVariationTemplateForm from "../../Forms/ProductForms/AddVariationTemplateForm";
+import { Link } from "react-router-dom";
 
 
 
@@ -120,6 +121,21 @@ const ListVariationTemplatePageComponent: React.FC = () => {
 														href="#">
 														edit
 													</a>
+												</li>
+												<li>
+													<hr className="dropdown-divider" />
+												</li>
+												<li>
+												
+													
+														<Link to={`/admin/variation-templates/duplicate/${el.id}`}>
+														<a
+														className="dropdown-item"
+														href="#">
+															duplicate
+														</a>
+													</Link>
+													
 												</li>
 												<li>
 													<hr className="dropdown-divider" />

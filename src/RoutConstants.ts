@@ -23,11 +23,16 @@ export enum ROUTE_LIST {
 
     createVariationTemplate="/admin/variation-templates/create",
     listVariationTemplate="/admin/variation-templates",
+    duplicateVariationTemplate="/admin/variation-templates/duplicate/:id",
+
+    
     createColor="/admin/colors/create",
     listColor="/admin/colors",
     createProduct="/admin/products/create",
     listProduct="/admin/products",
     createCoupon="/admin/coupon/create",
+    editCoupon="/admin/coupon/edit/:id",
+    
     listCoupon="/admin/coupon",
     listOrder="/admin/orders",
   }

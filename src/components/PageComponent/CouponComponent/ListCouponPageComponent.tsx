@@ -5,6 +5,7 @@ import CustomModal from "../../Modal/Modal";
 import { toast } from "react-toastify";
 
 import AddCouponForm from "../../Forms/CouponForms/AddCouponForm";
+import { Link } from "react-router-dom";
 
 
 
@@ -92,7 +93,8 @@ return <>
 						<th scope="col">Name</th>
 						<th scope="col">Category</th>
 						<th scope="col">Code</th>
-						<th scope="col">Discount</th>
+						<th scope="col">Discount Type</th>
+						<th scope="col">Discount Amount</th>
 						<th scope="col">Expire Date</th>
 						<th scope="col">Expirity</th>
 						<th scope="col">Status</th>
@@ -108,7 +110,8 @@ return <>
 									<td>{el.name && el.name}</td>
 									<td>{el.category?.name && el.category.name }</td>
 									<td>{el.code && el.code}</td>
-									<td>{el.discount && el.discount} %</td>
+									<td>{el.discount_type && el.discount_type} </td>
+									<td>{el.discount_amount && el.discount_amount} </td>
 									<td>{el.expire_date && el.expire_date}</td>
 									<td>{el.expire_date && calculateDate(el.expire_date)}</td>
 									<td>{ (parseInt(el.is_active)?(<div className="text-success">Active</div>):(<div className="text-danger">Deactive</div>))}</td>
@@ -123,15 +126,14 @@ return <>
 											</button>
 											<ul className="dropdown-menu action">
 												<li>
-													<a
-														onClick={() => {
-															setCurrentData(el);
-															showModal(true);
-														}}
+												<Link to={`/admin/coupon/edit/${el.id}`}>
+														<a
 														className="dropdown-item"
 														href="#">
-														edit
-													</a>
+															edit
+														</a>
+													</Link>
+												
 												</li>
 												<li>
 													<hr className="dropdown-divider" />
