@@ -122,7 +122,7 @@ const AddCouponForm: React.FC<UpdateFormInterface> = (props) => {
 
           el.qty = 0;
           el.variations.map((el2: any) => {
-            el.qty += el2.qty;
+            el.qty += parseInt(el2.qty);
           });
           return el;
         });
