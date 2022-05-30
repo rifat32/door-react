@@ -3,7 +3,7 @@ import React from "react";
 
 import { Link } from "react-router-dom";
 import AdminPageComponent from "../../../../components/PageComponent/AdminPageComponent";
-import ListDistrictPageComponent from "../../../../components/PageComponent/ElectionAreaComponent/ListDistrictPageComponent";
+
 import ListCategoryPageComponent from "../../../../components/PageComponent/ProductComponent/ListCategoryPageComponent";
 import { ROUTE_LIST } from "../../../../RoutConstants";
 

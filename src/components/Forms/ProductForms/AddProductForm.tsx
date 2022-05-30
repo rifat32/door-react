@@ -25,7 +25,9 @@ interface FormData {
 
 }
 interface Variation {
+	id:String;
 	variation_template_id:string;
+	color_id:string;
 	variation_value_template:any;
 }
 interface Colors {
@@ -51,7 +53,9 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 		is_featured:"0",
 		variation:[
 			{
+				id:"0",
 				variation_template_id:"",
+				color_id:"",
 				variation_value_template:[],
 
 			}
@@ -239,6 +243,7 @@ for (var i = 0; i < files.length; i++)
 		const tempValues =  JSON.parse(JSON.stringify(formData.variation)) 
 	
 		tempValues[index].variation_template_id = e.target.value;
+		tempValues[index].color_id = formData.variation[index].color_id;
 		tempValues[index].id = 0;
 		
     let variationTemlateIndex =  variationTemplates.findIndex((el:any) => {
@@ -259,6 +264,58 @@ for (var i = 0; i < files.length; i++)
 		setFormData({ ...formData,variation:tempValues });
 
 	};
+	const [colorToggle,setColorToggle] = useState("test")
+	
+	const handleVariationColorSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		
+		if(!e.target.value){
+			return;
+		}
+		
+		
+		
+		let index:number = parseInt(e.target.name.split(".")[1])
+		console.log(index)
+	
+		const tempValues =  JSON.parse(JSON.stringify(formData.variation)) 
+	
+		tempValues[index].color_id= e.target.value;
+		tempValues[index].variation_template_id = formData.variation[index].variation_template_id;
+		tempValues[index].id = formData.variation[index].id;
+		
+    // let variationTemlateIndex =  variationTemplates.findIndex((el:any) => {
+	// 	 return  el.id == e.target.value;
+	//    })
+
+	//    let variation_value_template = variationTemplates[variationTemlateIndex].variation_value_template.map((el:any) => {
+	// 	el.id = 0
+    //      el.price = 0;
+	// 	 el.qty = 0;
+	// 	 el.sub_sku = "";
+	// 	 return el;
+	//    })
+
+	//    tempValues[index].variation_value_template = variation_value_template;
+	//    console.log(tempValues)
+     	
+	
+			setColorToggle(e.target.value)
+
+		
+	
+			setFormData({ ...formData,variation:tempValues });
+		
+		
+	
+
+	};
+	useEffect(() => {
+// window.alert(colorToggle)
+if(colorToggle !="test") {
+	AddColor(colorToggle)
+}
+	},[colorToggle])
+	
 	const handleVariationValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
 		let index:number = parseInt(e.target.name.split(".")[1])
@@ -382,18 +439,27 @@ for (var i = 0; i < files.length; i++)
 		}
 	
 	};
-	const AddColor = () => {
+	const AddColor = (color_id:string) => {
 
 		const tempValues = [...formData.colors]
-		tempValues.push({
-			id:"",
-			name:"",
-			code:"",
-			color_id:"",
-			color_image:"",
+		let colorFound = false
+		tempValues.map((el:any)=> {
+if(el.color_id == color_id){
+	colorFound = true
+}
 		})
-		
-		setFormData({ ...formData,colors:tempValues });
+		if(!colorFound){
+			tempValues.push({
+				id:"",
+				name:"",
+				code:"",
+				color_id:color_id,
+				color_image:"",
+			})
+			
+			setFormData({ ...formData,colors:tempValues });
+		}
+	
 	};
 	const deleteColor = () => {
 
@@ -408,14 +474,11 @@ for (var i = 0; i < files.length; i++)
 	const handleVariationValueAdd = (index:number) => {
 
 	
-	
-	
-
 		const tempVariation =  JSON.parse(JSON.stringify(formData.variation)) 
 	
 	  console.log(tempVariation)
 	tempVariation[index].variation_value_template.push({
-id:0,
+        id:0,
 		name:"dummy",
 		price:0,
 		qty:0,
@@ -433,6 +496,7 @@ id:0,
 		tempValues.push(
 			{
 				variation_template_id:"",
+				color_id:"",
 				variation_value_template:[],
 
 			}
@@ -455,7 +519,9 @@ id:0,
 		is_featured:"0",
 		variation:[
 			{
+				id:"0",
 				variation_template_id:"",
+				color_id:"",
 				variation_value_template:[]
 		}
 		],
@@ -923,10 +989,13 @@ id:0,
 				formData.type === "variable"?(<div className="col-md-10 offset-md-1">
 				{/* head */}
 				<div className="row mb-2 ">
-					<div className="col-md-2 bg-success me-1">
+				<div className="col-md-2 bg-success ">
+					 <div className="text-light">Color</div>
+					</div>
+					<div className="col-md-2 bg-success ">
 					 <div className="text-light">Height</div>
 					</div>
-					<div className="col-md-9 bg-success ">
+					<div className="col-md-8 bg-success ">
 					<div className="text-light">Variation Values</div>
 					</div>
 				</div>
@@ -934,7 +1003,47 @@ id:0,
 				{
 					formData.variation.map((el,index) => {
 					  return (<div className="row " key={index}>
-					  <div className="col-md-2  me-1">
+						  {/* Color Start */}
+					<div className="col-md-2 ">
+					  <div className="">
+					  
+					  <select
+						  className={
+							  errors
+								  ? errors[`variation.${index}.color_id`]
+									  ? `form-control is-invalid`
+									  : `form-control is-valid`
+								  : "form-control"
+						  }
+						  id={`variation.${index}.color_id`}
+						  name={`variation.${index}.color_id`}
+						  onChange={handleVariationColorSelect}
+						  value={formData.variation[index].color_id}>
+						<option value="">Please Select</option>
+					{colors.map((el: any, index) => (
+						<option
+							key={index}
+							value={el.id}
+							style={{ textTransform: "uppercase" }}>
+							{el.name}
+						</option>
+					))}
+					  </select>
+					  {errors && (
+				<>	
+				{
+					errors[`variation.${index}.color_id`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
+
+				}
+				
+				</>
+					
+				)}
+					 
+				  </div>
+					  </div>
+						  {/* height Start */}
+					  <div className="col-md-2">
 					  <div className="">
 					  
 					  <select
@@ -972,7 +1081,7 @@ id:0,
 					 
 				  </div>
 					  </div>
-					  <div className="col-md-9 ">
+					  <div className="col-md-8">
 					  <div className="row ">
 									<div className="col-md-2 me-1   text-light bg-primary">Width</div>
 									<div className="col-md-2  me-1 text-light bg-primary">Price</div>
@@ -1343,7 +1452,7 @@ id:0,
 					 <div className="col-md-8 offset-2">
 					 <div className="text-center">
 			<button className="btn btn-danger me-2" 	type="button" onClick={deleteColor}>-</button>	
-			<button className="btn btn-primary" 	type="button" onClick={AddColor}>+</button>
+			<button className="btn btn-primary" 	type="button" onClick={() =>AddColor("")}>+</button>
 			
 			</div>
 					 </div>
