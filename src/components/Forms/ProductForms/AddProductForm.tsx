@@ -36,7 +36,7 @@ interface Colors {
 	code: string;
 	color_id:string;
 	color_image:string,
-	
+	is_variation_specific:boolean,
 }
 const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 	const [formData, setFormData] = useState<FormData>({
@@ -69,7 +69,8 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 				code:"",
 				
 				color_id:"",
-				color_image:""
+				color_image:"",
+				is_variation_specific:false
 			}
 		]
 		
@@ -268,9 +269,9 @@ for (var i = 0; i < files.length; i++)
 	
 	const handleVariationColorSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		
-		if(!e.target.value){
-			return;
-		}
+		// if(!e.target.value){
+		// 	return;
+		// }
 		
 		
 		
@@ -312,7 +313,7 @@ for (var i = 0; i < files.length; i++)
 	useEffect(() => {
 // window.alert(colorToggle)
 if(colorToggle !="test") {
-	AddColor(colorToggle)
+	AddColor(colorToggle,true)
 }
 	},[colorToggle])
 	
@@ -369,8 +370,6 @@ if(colorToggle !="test") {
 		let index:number = parseInt(e.target.name.split(".")[1])
 		let name:string = e.target.name.split(".")[2]
 
-		
-	
 		const tempValues =  JSON.parse(JSON.stringify(formData.colors)) 
 		tempValues[index][name] = e.target.value;
 		setFormData({ ...formData,colors:tempValues });
@@ -439,7 +438,7 @@ if(colorToggle !="test") {
 		}
 	
 	};
-	const AddColor = (color_id:string) => {
+	const AddColor = (color_id:string,is_variation_specific=false) => {
 
 		const tempValues = [...formData.colors]
 		let colorFound = false
@@ -455,19 +454,22 @@ if(el.color_id == color_id){
 				code:"",
 				color_id:color_id,
 				color_image:"",
+				is_variation_specific:is_variation_specific
 			})
 			
 			setFormData({ ...formData,colors:tempValues });
 		}
 	
 	};
-	const deleteColor = () => {
+	const deleteColor = (index:number) => {
 
 		const tempValues = [...formData.colors]
 	
-		if(tempValues.length > 1){
-			tempValues.pop()
-		}
+		// if(tempValues.length > 1){
+		// 	tempValues.pop()
+		// }
+		tempValues.splice(index,1);
+
 		setFormData({ ...formData,colors:tempValues });
 		
 	};
@@ -489,6 +491,21 @@ if(el.color_id == color_id){
 		 setFormData({ ...formData,variation:tempVariation });
 
 	};
+	const handleVariationDelete = (index:number) => {
+
+	
+		const tempVariation =  JSON.parse(JSON.stringify(formData.variation)) 
+	
+		tempVariation.splice(index,1)
+	
+		
+		 setFormData({ ...formData,variation:tempVariation });
+
+	};
+
+	
+
+
 
 	const AddVariation = () => {
 
@@ -534,6 +551,7 @@ if(el.color_id == color_id){
 			code:"",
 			color_id:"",
 			color_image:"",
+			is_variation_specific:false
 		}
 	]
 		});
@@ -554,10 +572,20 @@ if(el.color_id == color_id){
 	}
 	const createData = () => {
 	
-	
+ //    check color
+ let tempFormData = JSON.parse(JSON.stringify(formData));
+
+	if(formData.colors.length <=1 ){
+		if(!formData.colors[0].color_id) {
+        console.log(formData.colors[0])
+			tempFormData.colors = []
+			
+		}
+		
+	}
 
 		apiClient()
-			.post(`${BACKENDAPI}/v1.0/products`, { ...formData},
+			.post(`${BACKENDAPI}/v1.0/products`, { ...tempFormData},
 				)
 			.then((response) => {
 				console.log(response);
@@ -1088,10 +1116,13 @@ if(el.color_id == color_id){
 									<div className="col-md-2 me-1  text-light bg-primary">Quantity</div>
 									<div className="col-md-2  me-1
 									 text-light bg-primary">Sku</div>
-									<div className="col-md-2 me-1">
+									<div className="col-md-3">
 								<button className="btn  btn-primary"
 								//  style={{height:"0.1rem"}}
 								  	type="button" onClick={() => handleVariationValueAdd(index)}>+</button>	
+									<button className="btn  btn-danger"
+								//  style={{height:"0.1rem"}}
+								  	type="button" onClick={() => handleVariationDelete(index)}>-</button>	
 								</div>
 								 </div>
 						{
@@ -1287,9 +1318,12 @@ if(el.color_id == color_id){
 	<div className="col-md-3">
 		Colors
 	</div>
-	<div className="col-md-3">Name</div>
+
 	<div className="col-md-3">Code</div>
 	<div className="col-md-3">Image</div>
+	<div className="col-md-3">Action</div>
+
+		
 </div>
 
 
@@ -1336,38 +1370,7 @@ if(el.color_id == color_id){
 					</div>
 				
 			{/*  color name */}
-			<div className="col-md-3">
-<input
-					type="text"
-					className={
-						errors
-							? errors[`colors.${index}.name`]
-								? `form-control is-invalid`
-								: `form-control is-valid`
-							: "form-control"
-					}
-					id={`colors.${index}.name`}
-					name={`colors.${index}.name`}
-				readOnly
-					onChange={handleColorChange}
-					value={formData.colors[index].name}
-				/>
-				
-			
-				{errors && (
-				<>	
-				{
-					errors[`colors.${index}.name`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
-
-				}
-				
-				</>
-					
-				)}
-			
-  
-				
-			</div>
+		
 			{/* color code */}
 			<div className="col-md-3">
 <input
@@ -1437,6 +1440,13 @@ if(el.color_id == color_id){
 			
 			</div>
 {/* end color image */}
+<div className="col-md-3">
+          
+		  <button className="btn btn-danger " 	type="button" onClick={() => {
+deleteColor(index)
+		  }}>-</button>
+			  
+		  </div>
 			<br />
 			</div>
 					
@@ -1451,7 +1461,7 @@ if(el.color_id == color_id){
 				 <div className="row">
 					 <div className="col-md-8 offset-2">
 					 <div className="text-center">
-			<button className="btn btn-danger me-2" 	type="button" onClick={deleteColor}>-</button>	
+		
 			<button className="btn btn-primary" 	type="button" onClick={() =>AddColor("")}>+</button>
 			
 			</div>
