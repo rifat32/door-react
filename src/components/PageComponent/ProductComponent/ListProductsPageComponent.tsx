@@ -5,6 +5,7 @@ import CustomModal from "../../Modal/Modal";
 import AddProductForm from "../../Forms/ProductForms/AddProductForm";
 import { toast } from "react-toastify";
 import EditPriceForm from "../../Forms/ProductForms/EditPriceForm";
+import { Link } from "react-router-dom";
 
 const ListProductsPageComponent: React.FC = () => {
 	interface Links {
@@ -341,6 +342,7 @@ const ListProductsPageComponent: React.FC = () => {
 						<th scope="col">Image</th>
 						<th scope="col">Type</th>
 						<th scope="col">Category</th>
+						<th scope="col">Style</th>
 						<th scope="col">Sku</th>
 						<th scope="col">Quantity</th>
 						<th scope="col">Status</th>
@@ -377,8 +379,8 @@ const ListProductsPageComponent: React.FC = () => {
 									<td>{el.image && <img src={`${BACKEND}/${el.image}`} height={100} width={100} />}</td>
 									<td>{el.type && el.type}</td>
 									<td>{el.category && el.category}</td>
+									<td>{el.style && el.style}</td>
 									<td>{el.sku && el.sku}</td>
-									
 									<td>{el.qty && el.qty}</td>
 									<td>{el.status && el.status}</td>
 									<td>{el.is_featured ? "yes":"no"}</td>
@@ -393,15 +395,15 @@ const ListProductsPageComponent: React.FC = () => {
 											</button>
 											<ul className="dropdown-menu action">
 												<li>
-													<a
-														onClick={() => {
-															setCurrentData(el);
-															showModal(true);
-														}}
+													<Link
+														// onClick={() => {
+														// 	setCurrentData(el);
+														// 	showModal(true);
+														// }}
 														className="dropdown-item"
-														href="#">
+														to={`/admin/products/edit/${el.id}`}>
 														edit
-													</a>
+													</Link>
 												</li>
 												<li>
 													<hr className="dropdown-divider" />
@@ -497,7 +499,7 @@ const ListProductsPageComponent: React.FC = () => {
 					"No data to show"
 				)}
 			</div> */}
-			<CustomModal
+			{/* <CustomModal
 				isOpen={modalIsOpen}
 				showModal={showModal}
 				type="Update Product">
@@ -507,7 +509,7 @@ const ListProductsPageComponent: React.FC = () => {
 					showModal={showModal}
 					type="update"
 				/>
-			</CustomModal>
+			</CustomModal> */}
 			<CustomModal
 				isOpen={priceModalIsOpen}
 				showModal={showPriceModal}

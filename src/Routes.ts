@@ -137,6 +137,12 @@ export const RouteData: RouteInterface[] = [
 		exact: false,
 		component: AddProductPage,
 	},
+		// products
+        {
+			path: "/admin/products/edit/:id",
+			exact: false,
+			component: AddProductPage,
+		},
 	{
 		path: ROUTE_LIST.listProduct,
 		exact: true,
