@@ -22,7 +22,9 @@ export enum ROUTE_LIST {
 
 
     createVariationTemplate="/admin/variation-templates/create",
+    createOptionTemplate="/admin/options/create",
     listVariationTemplate="/admin/variation-templates",
+    listOptionTemplate="/admin/options",
     duplicateVariationTemplate="/admin/variation-templates/duplicate/:id",
 
     

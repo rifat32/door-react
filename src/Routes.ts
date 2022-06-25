@@ -55,6 +55,8 @@ import ListColorPage from "./pages/AdminPages/Product/Color/ListColorPage";
 import AddColorPage from "./pages/AdminPages/Product/Color/AddColorPage";
 import ListStylePage from "./pages/AdminPages/Product/Style/ListStylePage";
 import AddStylePage from "./pages/AdminPages/Product/Style/AddStylePage";
+import AddOptionPage from "./pages/AdminPages/Product/Option/AddOptionTemplatePage";
+import ListOptionTemplatePage from "./pages/AdminPages/Product/Option/ListOptionTemplatePage";
 
 
 
@@ -154,6 +156,12 @@ export const RouteData: RouteInterface[] = [
 		component: ListVariationTemplatePage,
 	},
 	{
+		path: ROUTE_LIST.listOptionTemplate,
+		exact: true,
+		component: ListOptionTemplatePage,
+	},
+	
+	{
 		path: ROUTE_LIST.duplicateVariationTemplate,
 		exact: true,
 		component: AddVariationTemplatePage,
@@ -165,6 +173,11 @@ export const RouteData: RouteInterface[] = [
 		path: ROUTE_LIST.createVariationTemplate,
 		exact: false,
 		component: AddVariationTemplatePage,
+	},
+	{
+		path: ROUTE_LIST.createOptionTemplate,
+		exact: false,
+		component: AddOptionPage,
 	},
 	{
 		path: ROUTE_LIST.listColor,

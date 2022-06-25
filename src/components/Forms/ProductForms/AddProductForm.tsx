@@ -7,7 +7,7 @@ import { ErrorMessage } from "../../../utils/ErrorMessage";
 
 
 interface FormData {
-	id:string;
+	id: string;
 	name: string;
 	category_id: string;
 	style_id: string;
@@ -17,30 +17,30 @@ interface FormData {
 	price: string;
 	qty: string;
 	status: string;
-	variation:Variation[];
-    image:"";
-	is_featured:string;
-	images:string[];
-	colors:Colors[]
+	variation: Variation[];
+	image: "";
+	is_featured: string;
+	images: string[];
+	colors: Colors[]
 
 }
 interface Variation {
-	id:String;
-	variation_template_id:string;
-	color_id:string;
-	variation_value_template:any;
+	id: String;
+	variation_template_id: string;
+	color_id: string;
+	variation_value_template: any;
 }
 interface Colors {
 	id: string;
 	name: string;
 	code: string;
-	color_id:string;
-	color_image:string,
-	is_variation_specific:boolean,
+	color_id: string;
+	color_image: string,
+	is_variation_specific: boolean,
 }
 const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 	const [formData, setFormData] = useState<FormData>({
-		id:"",
+		id: "",
 		name: "",
 		description: "",
 		sku: "",
@@ -49,46 +49,48 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 		style_id: "",
 		price: "",
 		qty: "",
-		status:"active",
-		is_featured:"0",
-		variation:[
+		status: "active",
+		is_featured: "0",
+		variation: [
 			{
-				id:"0",
-				variation_template_id:"",
-				color_id:"",
-				variation_value_template:[],
+				id: "0",
+				variation_template_id: "",
+				color_id: "",
+				variation_value_template: [],
 
 			}
 		],
-	    image: "",
-		images:[],
-		colors:[
+		image: "",
+		images: [],
+		colors: [
 			{
-				id:"",
-				name:"",
-				code:"",
-				
-				color_id:"",
-				color_image:"",
-				is_variation_specific:false
+				id: "",
+				name: "",
+				code: "",
+
+				color_id: "",
+				color_image: "",
+				is_variation_specific: false
 			}
 		]
-		
+
 	});
 	const [imageFile, setImageFile] = useState<any>();
 	const [categories, setCategories] = useState([]);
 	const [styles, setStyles] = useState([]);
-	
+
 	const [colors, setColors] = useState([]);
+	const [options, setOptions] = useState<any>([]);
+	
 	const [variationTemplates, setVariationTemplates] = useState<any>([]);
 	const [productTypes, setProductTypes] = useState([
 		{
-			id:1,
-			value:"single"
+			id: 1,
+			value: "single"
 		},
 		{
-			id:1,
-			value:"variable"
+			id: 1,
+			value: "variable"
 		}
 	]);
 	const [errors, setErrors] = useState<any>(null);
@@ -98,7 +100,18 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 		loadStyles();
 		loadVariationTemplates();
 		loadColors();
+		loadOptions();
 	}, []);
+ const	handleOptionChecked = (e:React.ChangeEvent<HTMLInputElement>) => {
+          const tempOptions = JSON.parse(JSON.stringify(options))
+		  tempOptions.map((el:any) => {
+			if(el.id == e.target.value){
+				el.selected = e.target.checked
+			}
+            return el
+		  })
+		  setOptions(tempOptions)
+ }
 	// pagination required
 	const loadCategories = () => {
 		apiClient()
@@ -134,6 +147,22 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 				console.log(error.response);
 			});
 	};
+	const loadOptions= () => {
+
+		apiClient()
+			.get(`${BACKENDAPI}/v1.0/options/all`)
+			.then((response: any) => {
+				console.log(response);
+				const tempData = response.data.data.map((el:any) => {
+					el.selected = false;
+              return el;
+				})
+				setOptions(tempData);
+			})
+			.catch((error) => {
+				console.log(error.response);
+			});
+	};
 	const loadVariationTemplates = () => {
 		apiClient()
 			.get(`${BACKENDAPI}/v1.0/variation-templates/all`)
@@ -156,204 +185,203 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 	};
 
 	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-	
+
 		if (!e.target.files) {
 			return;
-		  }
-		 
+		}
+
 		let file = e.target.files[0]
 		setImageFile(file)
 
-            let data:any = new FormData();
-            data.append('image', file, file.name);
-            apiClient().post(`${BACKENDAPI}/v1.0/image/upload/single/product`, data, {
-                headers: {
-                    'accept': 'application/json',
-                    'Accept-Language': 'en-US,en;q=0.8',
-                    'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
-                }
-            })
+		let data: any = new FormData();
+		data.append('image', file, file.name);
+		apiClient().post(`${BACKENDAPI}/v1.0/image/upload/single/product`, data, {
+			headers: {
+				'accept': 'application/json',
+				'Accept-Language': 'en-US,en;q=0.8',
+				'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
+			}
+		})
 			.then((response: any) => {
 				console.log(response);
-			setFormData((prevData)=> {
-return {
-	...prevData,
-	image:response.data.image
-}
-			})
+				setFormData((prevData) => {
+					return {
+						...prevData,
+						image: response.data.image
+					}
+				})
 			})
 			.catch((error) => {
 				console.log(error.response);
 			});
 
-		
-	  };
-	  const handleMultipleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-	
-		if(!e.target.files) {
-			return;
-		  }
-const tempImages:string[] = [];
 
-let files:any = e.target.files
-for (var i = 0; i < files.length; i++) 
-{
-	let data:any = new FormData();
-	data.append('image', e.target.files[i], e.target.files[i].name);
-	apiClient().post(`${BACKENDAPI}/v1.0/image/upload/single/product`, data, {
-		headers: {
-			'accept': 'application/json',
-			'Accept-Language': 'en-US,en;q=0.8',
-			'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
-		}
-	})
-	.then((response: any) => {
-		console.log(response);
-	tempImages.push(response.data.image)
-	if(i = files.length -1 ){
-		setFormData((prevData)=> {
-			return {
-				...prevData,
-				images:[...tempImages]
-			}
-						})
-	}
-	})
-	.catch((error) => {
-		console.log(error.response);
-	});
-}
+	};
+	const handleMultipleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
-
-		 
-		
-	
-
-        
-
-		
-	  };
-	  
-	const handleVariationSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		if(!e.target.value){
+		if (!e.target.files) {
 			return;
 		}
-		let index:number = parseInt(e.target.name.split(".")[1])
-		console.log(index)
-	
-		const tempValues =  JSON.parse(JSON.stringify(formData.variation)) 
-	
-		tempValues[index].variation_template_id = e.target.value;
-		tempValues[index].color_id = formData.variation[index].color_id;
-		tempValues[index].id = 0;
-		
-    let variationTemlateIndex =  variationTemplates.findIndex((el:any) => {
-		 return  el.id == e.target.value;
-	   })
+		const tempImages: string[] = [];
 
-	   let variation_value_template = variationTemplates[variationTemlateIndex].variation_value_template.map((el:any) => {
-		el.id = 0
-         el.price = 0;
-		 el.qty = 0;
-		 el.sub_sku = "";
-		 return el;
-	   })
-
-	   tempValues[index].variation_value_template = variation_value_template;
-	   console.log(tempValues)
- 
-		setFormData({ ...formData,variation:tempValues });
-
-	};
-	const [colorToggle,setColorToggle] = useState("test")
-	
-	const handleVariationColorSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		
-		// if(!e.target.value){
-		// 	return;
-		// }
-		
-		
-		
-		let index:number = parseInt(e.target.name.split(".")[1])
-		console.log(index)
-	
-		const tempValues =  JSON.parse(JSON.stringify(formData.variation)) 
-	
-		tempValues[index].color_id= e.target.value;
-		tempValues[index].variation_template_id = formData.variation[index].variation_template_id;
-		tempValues[index].id = formData.variation[index].id;
-		
-    // let variationTemlateIndex =  variationTemplates.findIndex((el:any) => {
-	// 	 return  el.id == e.target.value;
-	//    })
-
-	//    let variation_value_template = variationTemplates[variationTemlateIndex].variation_value_template.map((el:any) => {
-	// 	el.id = 0
-    //      el.price = 0;
-	// 	 el.qty = 0;
-	// 	 el.sub_sku = "";
-	// 	 return el;
-	//    })
-
-	//    tempValues[index].variation_value_template = variation_value_template;
-	//    console.log(tempValues)
-     	
-	
-			setColorToggle(e.target.value)
-
-		
-	
-			setFormData({ ...formData,variation:tempValues });
-		
-		
-	
-
-	};
-	useEffect(() => {
-// window.alert(colorToggle)
-if(colorToggle !="test") {
-	AddColor(colorToggle,true)
-}
-	},[colorToggle])
-	
-	const handleVariationValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-
-		let index:number = parseInt(e.target.name.split(".")[1])
-		let vindex:number = parseInt(e.target.name.split(".")[3])
-		let name:string = e.target.name.split(".")[4]
-		console.log(index,name)
-	
-
-		const tempValues =  JSON.parse(JSON.stringify(formData.variation)) 
-	
-	  console.log(tempValues)
-		tempValues[index].variation_value_template[vindex][name]= e.target.value;
-		setFormData({ ...formData,variation:tempValues });
-
-	};
-	const handleVariationValueDelete = (index:number,vindex:number) => {
-		if (window.confirm("Are you sure  want to delete ?")) {
-			console.log(index,vindex)
-			if (props.type === "update") {
-				
-				apiClient()
-				.delete(`${BACKENDAPI}/v1.0/products/${formData.variation[index].variation_value_template[vindex].id}`)
+		let files: any = e.target.files
+		for (var i = 0; i < files.length; i++) {
+			let data: any = new FormData();
+			data.append('image', e.target.files[i], e.target.files[i].name);
+			apiClient().post(`${BACKENDAPI}/v1.0/image/upload/single/product`, data, {
+				headers: {
+					'accept': 'application/json',
+					'Accept-Language': 'en-US,en;q=0.8',
+					'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
+				}
+			})
 				.then((response: any) => {
-					console.log(response)
-					console.log(formData.variation[index].variation_value_template[vindex].id)
+					console.log(response);
+					tempImages.push(response.data.image)
+					if (i = files.length - 1) {
+						setFormData((prevData) => {
+							return {
+								...prevData,
+								images: [...tempImages]
+							}
+						})
+					}
 				})
 				.catch((error) => {
 					console.log(error.response);
 				});
+		}
+
+
+
+
+
+
+
+
+
+	};
+
+	const handleVariationSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		if (!e.target.value) {
+			return;
+		}
+		let index: number = parseInt(e.target.name.split(".")[1])
+		console.log(index)
+
+		const tempValues = JSON.parse(JSON.stringify(formData.variation))
+
+		tempValues[index].variation_template_id = e.target.value;
+		tempValues[index].color_id = formData.variation[index].color_id;
+		tempValues[index].id = 0;
+
+		let variationTemlateIndex = variationTemplates.findIndex((el: any) => {
+			return el.id == e.target.value;
+		})
+
+		let variation_value_template = variationTemplates[variationTemlateIndex].variation_value_template.map((el: any) => {
+			el.id = 0
+			el.price = 0;
+			el.qty = 0;
+			el.sub_sku = "";
+			return el;
+		})
+
+		tempValues[index].variation_value_template = variation_value_template;
+		console.log(tempValues)
+
+		setFormData({ ...formData, variation: tempValues });
+
+	};
+	const [colorToggle, setColorToggle] = useState("test")
+
+	const handleVariationColorSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+
+		// if(!e.target.value){
+		// 	return;
+		// }
+
+
+
+		let index: number = parseInt(e.target.name.split(".")[1])
+		console.log(index)
+
+		const tempValues = JSON.parse(JSON.stringify(formData.variation))
+
+		tempValues[index].color_id = e.target.value;
+		tempValues[index].variation_template_id = formData.variation[index].variation_template_id;
+		tempValues[index].id = formData.variation[index].id;
+
+		// let variationTemlateIndex =  variationTemplates.findIndex((el:any) => {
+		// 	 return  el.id == e.target.value;
+		//    })
+
+		//    let variation_value_template = variationTemplates[variationTemlateIndex].variation_value_template.map((el:any) => {
+		// 	el.id = 0
+		//      el.price = 0;
+		// 	 el.qty = 0;
+		// 	 el.sub_sku = "";
+		// 	 return el;
+		//    })
+
+		//    tempValues[index].variation_value_template = variation_value_template;
+		//    console.log(tempValues)
+
+
+		setColorToggle(e.target.value)
+
+
+
+		setFormData({ ...formData, variation: tempValues });
+
+
+
+
+	};
+	useEffect(() => {
+		// window.alert(colorToggle)
+		if (colorToggle != "test") {
+			AddColor(colorToggle, true)
+		}
+	}, [colorToggle])
+
+	const handleVariationValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+		let index: number = parseInt(e.target.name.split(".")[1])
+		let vindex: number = parseInt(e.target.name.split(".")[3])
+		let name: string = e.target.name.split(".")[4]
+		console.log(index, name)
+
+
+		const tempValues = JSON.parse(JSON.stringify(formData.variation))
+
+		console.log(tempValues)
+		tempValues[index].variation_value_template[vindex][name] = e.target.value;
+		setFormData({ ...formData, variation: tempValues });
+
+	};
+	const handleVariationValueDelete = (index: number, vindex: number) => {
+		if (window.confirm("Are you sure  want to delete ?")) {
+			console.log(index, vindex)
+			if (props.type === "update") {
+
+				apiClient()
+					.delete(`${BACKENDAPI}/v1.0/products/${formData.variation[index].variation_value_template[vindex].id}`)
+					.then((response: any) => {
+						console.log(response)
+						console.log(formData.variation[index].variation_value_template[vindex].id)
+					})
+					.catch((error) => {
+						console.log(error.response);
+					});
 			}
 
-			const tempVariation =  JSON.parse(JSON.stringify(formData.variation)) 
-		
-		  console.log(tempVariation)
-		  
-		 const tempValue =	tempVariation[index].variation_value_template.filter((el:any,indx:number) => {
-			
+			const tempVariation = JSON.parse(JSON.stringify(formData.variation))
+
+			console.log(tempVariation)
+
+			const tempValue = tempVariation[index].variation_value_template.filter((el: any, indx: number) => {
+
 				// if(indx == vindex) {
 				// 	console.log("ffff",indx,vindex)
 				//    return el;
@@ -361,50 +389,50 @@ if(colorToggle !="test") {
 				return indx !== vindex;
 			});
 			tempVariation[index].variation_value_template = tempValue
-			
-			 setFormData({ ...formData,variation:tempVariation });
+
+			setFormData({ ...formData, variation: tempVariation });
 		}
-	
+
 	};
 	const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		let index:number = parseInt(e.target.name.split(".")[1])
-		let name:string = e.target.name.split(".")[2]
+		let index: number = parseInt(e.target.name.split(".")[1])
+		let name: string = e.target.name.split(".")[2]
 
-		const tempValues =  JSON.parse(JSON.stringify(formData.colors)) 
+		const tempValues = JSON.parse(JSON.stringify(formData.colors))
 		tempValues[index][name] = e.target.value;
-		setFormData({ ...formData,colors:tempValues });
+		setFormData({ ...formData, colors: tempValues });
 	};
 	const handleColorImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-	
+
 		if (!e.target.files) {
 			return;
-		  }
-		 
+		}
+
 		let file = e.target.files[0]
 		setImageFile(file)
 
-            let data:any = new FormData();
-            data.append('image', file, file.name);
-            apiClient().post(`${BACKENDAPI}/v1.0/image/upload/single/product`, data, {
-                headers: {
-                    'accept': 'application/json',
-                    'Accept-Language': 'en-US,en;q=0.8',
-                    'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
-                }
-            })
+		let data: any = new FormData();
+		data.append('image', file, file.name);
+		apiClient().post(`${BACKENDAPI}/v1.0/image/upload/single/product`, data, {
+			headers: {
+				'accept': 'application/json',
+				'Accept-Language': 'en-US,en;q=0.8',
+				'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
+			}
+		})
 			.then((response: any) => {
 				console.log(response);
 
-				let index:number = parseInt(e.target.name.split(".")[1])
-				let name:string = e.target.name.split(".")[2]
-		
-				
-			
-				const tempValues =  JSON.parse(JSON.stringify(formData.colors)) 
-				tempValues[index][name] = response.data.image;
-				setFormData({ ...formData,colors:tempValues });
+				let index: number = parseInt(e.target.name.split(".")[1])
+				let name: string = e.target.name.split(".")[2]
 
-	
+
+
+				const tempValues = JSON.parse(JSON.stringify(formData.colors))
+				tempValues[index][name] = response.data.image;
+				setFormData({ ...formData, colors: tempValues });
+
+
 
 
 
@@ -415,145 +443,145 @@ if(colorToggle !="test") {
 				console.log(error.response);
 			});
 
-		
-	  };
-	const handleColorSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		let index:number = parseInt(e.target.name.split(".")[1])
-		
-        let value = e.target.value
 
-		if(value){
-			let color:any= colors.find((el:any) => {
+	};
+	const handleColorSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		let index: number = parseInt(e.target.name.split(".")[1])
+
+		let value = e.target.value
+
+		if (value) {
+			let color: any = colors.find((el: any) => {
 				return parseInt(el.id) == parseInt(value)
 			})
-		
-			const tempValues =  JSON.parse(JSON.stringify(formData.colors)) 
-			
-				tempValues[index].id = "";
-				tempValues[index].name = color.name;
-				tempValues[index].code = color.code;
-				tempValues[index].color_id = color.id;
-	
-			setFormData({ ...formData,colors:tempValues });
+
+			const tempValues = JSON.parse(JSON.stringify(formData.colors))
+
+			tempValues[index].id = "";
+			tempValues[index].name = color.name;
+			tempValues[index].code = color.code;
+			tempValues[index].color_id = color.id;
+
+			setFormData({ ...formData, colors: tempValues });
 		}
-	
+
 	};
-	const AddColor = (color_id:string,is_variation_specific=false) => {
+	const AddColor = (color_id: string, is_variation_specific = false) => {
 
 		const tempValues = [...formData.colors]
 		let colorFound = false
-		tempValues.map((el:any)=> {
-if(el.color_id == color_id){
-	colorFound = true
-}
+		tempValues.map((el: any) => {
+			if (el.color_id == color_id) {
+				colorFound = true
+			}
 		})
-		if(!colorFound){
+		if (!colorFound) {
 			tempValues.push({
-				id:"",
-				name:"",
-				code:"",
-				color_id:color_id,
-				color_image:"",
-				is_variation_specific:is_variation_specific
+				id: "",
+				name: "",
+				code: "",
+				color_id: color_id,
+				color_image: "",
+				is_variation_specific: is_variation_specific
 			})
-			
-			setFormData({ ...formData,colors:tempValues });
+
+			setFormData({ ...formData, colors: tempValues });
 		}
-	
+
 	};
-	const deleteColor = (index:number) => {
+	const deleteColor = (index: number) => {
 
 		const tempValues = [...formData.colors]
-	
+
 		// if(tempValues.length > 1){
 		// 	tempValues.pop()
 		// }
-		tempValues.splice(index,1);
+		tempValues.splice(index, 1);
 
-		setFormData({ ...formData,colors:tempValues });
-		
-	};
-	const handleVariationValueAdd = (index:number) => {
-
-	
-		const tempVariation =  JSON.parse(JSON.stringify(formData.variation)) 
-	
-	  console.log(tempVariation)
-	tempVariation[index].variation_value_template.push({
-        id:0,
-		name:"dummy",
-		price:0,
-		qty:0,
-		sub_sku:""
-	})
-	
-		
-		 setFormData({ ...formData,variation:tempVariation });
+		setFormData({ ...formData, colors: tempValues });
 
 	};
-	const handleVariationDelete = (index:number) => {
+	const handleVariationValueAdd = (index: number) => {
 
-	
-		const tempVariation =  JSON.parse(JSON.stringify(formData.variation)) 
-	
-		tempVariation.splice(index,1)
-	
-		
-		 setFormData({ ...formData,variation:tempVariation });
+
+		const tempVariation = JSON.parse(JSON.stringify(formData.variation))
+
+		console.log(tempVariation)
+		tempVariation[index].variation_value_template.push({
+			id: 0,
+			name: "dummy",
+			price: 0,
+			qty: 0,
+			sub_sku: ""
+		})
+
+
+		setFormData({ ...formData, variation: tempVariation });
+
+	};
+	const handleVariationDelete = (index: number) => {
+
+
+		const tempVariation = JSON.parse(JSON.stringify(formData.variation))
+
+		tempVariation.splice(index, 1)
+
+
+		setFormData({ ...formData, variation: tempVariation });
 
 	};
 
-	
+
 
 
 
 	const AddVariation = () => {
 
-		const tempValues =  JSON.parse(JSON.stringify(formData.variation)) 
+		const tempValues = JSON.parse(JSON.stringify(formData.variation))
 		tempValues.push(
 			{
-				variation_template_id:"",
-				color_id:"",
-				variation_value_template:[],
+				variation_template_id: "",
+				color_id: "",
+				variation_value_template: [],
 
 			}
 		)
-		
-		setFormData({ ...formData,variation:tempValues });
+
+		setFormData({ ...formData, variation: tempValues });
 	};
 	const resetFunction = () => {
 		setFormData({
-			id:"",
+			id: "",
 			name: "",
-		description: "",
-		sku: "",
-		type: "single",
-		category_id: "",
-		style_id: "",
-		price: "",
-		qty: "",
-		status:"active",
-		is_featured:"0",
-		variation:[
-			{
-				id:"0",
-				variation_template_id:"",
-				color_id:"",
-				variation_value_template:[]
-		}
-		],
-	 image: "",
-	 images:[],
-	 colors:[
-		{
-			id:"",
-			name:"",
-			code:"",
-			color_id:"",
-			color_image:"",
-			is_variation_specific:false
-		}
-	]
+			description: "",
+			sku: "",
+			type: "single",
+			category_id: "",
+			style_id: "",
+			price: "",
+			qty: "",
+			status: "active",
+			is_featured: "0",
+			variation: [
+				{
+					id: "0",
+					variation_template_id: "",
+					color_id: "",
+					variation_value_template: []
+				}
+			],
+			image: "",
+			images: [],
+			colors: [
+				{
+					id: "",
+					name: "",
+					code: "",
+					color_id: "",
+					color_image: "",
+					is_variation_specific: false
+				}
+			]
 		});
 	};
 	const handleSubmit = (e: React.FormEvent) => {
@@ -565,28 +593,32 @@ if(el.color_id == color_id){
 			createData();
 		}
 	};
-	const invalidInputHandler = (error:any) => {
+	const invalidInputHandler = (error: any) => {
 		if (error.status === 422) {
 			setErrors(error.data.errors);
 		}
 	}
 	const createData = () => {
-	
- //    check color
- let tempFormData = JSON.parse(JSON.stringify(formData));
 
-	if(formData.colors.length <=1 ){
-		if(!formData.colors[0].color_id) {
-        console.log(formData.colors[0])
-			tempFormData.colors = []
-			
+		//    check color
+		let tempFormData = JSON.parse(JSON.stringify(formData));
+
+		if (formData.colors.length <= 1) {
+			if (!formData.colors[0].color_id) {
+				console.log(formData.colors[0])
+				tempFormData.colors = []
+
+			}
+
 		}
-		
-	}
+
+		const tempOptions = options.filter((el:any) => {
+			return el.selected === true
+		})
 
 		apiClient()
-			.post(`${BACKENDAPI}/v1.0/products`, { ...tempFormData},
-				)
+			.post(`${BACKENDAPI}/v1.0/products`, { ...tempFormData,options:tempOptions },
+		)
 			.then((response) => {
 				console.log(response);
 				toast.success("Data saved");
@@ -600,62 +632,84 @@ if(el.color_id == color_id){
 	};
 	// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	// edit data section
-	const loadProduct = (id:string) => {
+	const loadProduct = (id: string) => {
 		apiClient()
 			.get(`${BACKENDAPI}/v1.0/products/${id}`)
 			.then((response: any) => {
 				console.log(response);
-				const {id,name,category_id,style_id,sku,description,type,product_variations,variations,image,colors,status,is_featured} = response.data.product
+				const { id, name, category_id, style_id, sku, description, type, product_variations, variations, image, colors, status, is_featured,options:productOptions } = response.data.product
 
-					
 				
-              let price = "";
-			  let qty = "";
-			  let tempVariation = []
-				if(type === "single"){
-                   price = variations[0].price
-				   qty = variations[0].qty
-				   
-				} else {
-					tempVariation = product_variations.map((el:any) => {
-
-			
-
-
-					
-						el.variation_value_template = el.variations.map((el2:any) => {
-						 return el2;
-							 })
-							return el
-					   
-					   })
-				}
-			
-
-				console.log(tempVariation)
-			let tempColors = colors.map((el:any) => {
-				el.name = el.color.name
-				el.code = el.color.code
-                return el;
+			apiClient()
+			.get(`${BACKENDAPI}/v1.0/options/all`)
+			.then((response: any) => {
+				console.log(response);
+				const tempData = response.data.data.map((el:any) => {
+				productOptions.map((el2:any) => {
+                     if(el2.option_id == el.id) {
+						el.selected = true
+					 }
+				})
+              return el;
+				})
+				setOptions(tempData);
 			})
+			.catch((error) => {
+				console.log(error.response);
+			});
 		
 
+
+
+
+
+				let price = "";
+				let qty = "";
+				let tempVariation = []
+				if (type === "single") {
+					price = variations[0].price
+					qty = variations[0].qty
+
+				} else {
+					tempVariation = product_variations.map((el: any) => {
+
+
+
+
+
+						el.variation_value_template = el.variations.map((el2: any) => {
+							return el2;
+						})
+						return el
+
+					})
+				}
+
+
+				console.log(tempVariation)
+				let tempColors = colors.map((el: any) => {
+					el.name = el.color.name
+					el.code = el.color.code
+					return el;
+				})
+
+
 				setFormData({
-				...formData,
-				id,
-				name,
-				category_id,
-				style_id,
-				sku,
-				description,
-				type,
-				price,
-				qty,
-				variation:tempVariation,
-				image,
-				colors:tempColors,
-				status,
-				is_featured
+					...formData,
+					id,
+					name,
+					category_id,
+					style_id,
+					sku,
+					description,
+					type,
+					price,
+					qty,
+					variation: tempVariation,
+					image,
+					colors: tempColors,
+					status,
+					is_featured
 				})
 				// setCategories(response.data.data);
 			})
@@ -663,19 +717,23 @@ if(el.color_id == color_id){
 				console.log(error);
 			});
 	};
-	
+
 	useEffect(() => {
 		if (props.type == "update") {
 			console.log(props.value)
 			loadProduct(props.value.id)
-			
+
 			return
 			setFormData(props.value);
 		}
 	}, []);
 	const updateData = () => {
+		const tempOptions = options.filter((el:any) => {
+			return el.selected === true
+		})
+
 		apiClient()
-			.put(`${BACKENDAPI}/v1.0/products`, { ...formData })
+			.put(`${BACKENDAPI}/v1.0/products`, { ...formData,options:tempOptions })
 			.then((response: any) => {
 				console.log(response);
 				toast.success("Data Updated");
@@ -822,7 +880,7 @@ if(el.color_id == color_id){
 					<option value="active">active</option>
 					<option value="inactive">inactive</option>
 					<option value="draft">draft</option>
-					
+
 				</select>
 				{errors?.category_id && (
 					<div className="invalid-feedback">{errors.category_id[0]}</div>
@@ -857,9 +915,9 @@ if(el.color_id == color_id){
 				<label htmlFor="description" className="form-label">
 					Description
 				</label>
-			
+
 				<textarea
-				 rows={6}
+					rows={6}
 					className={
 						errors
 							? errors.description
@@ -872,7 +930,7 @@ if(el.color_id == color_id){
 					onChange={handleTextAreaChange}
 					value={formData.description}
 				>
-					</textarea>
+				</textarea>
 				{errors?.description && (
 					<div className="invalid-feedback">{errors.description[0]}</div>
 				)}
@@ -880,11 +938,11 @@ if(el.color_id == color_id){
 			</div>
 			<div className="col-md-4">
 				<label htmlFor="sku" className="form-label">
-				 {imageFile?.name?imageFile.name:"upload image"}
+					{imageFile?.name ? imageFile.name : "upload image"}
 				</label>
 				<br />
-				{imageFile && 	<img src={URL.createObjectURL(imageFile)} alt="..." height={100} width={100} />}
-	
+				{imageFile && <img src={URL.createObjectURL(imageFile)} alt="..." height={100} width={100} />}
+
 				<input
 					type="file"
 					className={
@@ -897,7 +955,7 @@ if(el.color_id == color_id){
 					id="image"
 					name="image"
 					onChange={handleImageChange}
-			
+
 				/>
 				{errors?.image && (
 					<div className="invalid-feedback">{errors.image[0]}</div>
@@ -906,10 +964,10 @@ if(el.color_id == color_id){
 			</div>
 			<div className="col-md-4">
 				<label htmlFor="images" className="form-label">
-				Upload multiple Image
+					Upload multiple Image
 				</label>
-				
-	
+
+
 				<input
 					type="file"
 					className={
@@ -923,7 +981,7 @@ if(el.color_id == color_id){
 					name="images"
 					onChange={handleMultipleImageChange}
 					multiple
-			
+
 				/>
 				{errors?.images && (
 					<div className="invalid-feedback">{errors.images[0]}</div>
@@ -947,8 +1005,8 @@ if(el.color_id == color_id){
 					onChange={handleSelect}
 					value={formData.type}
 					disabled={props.type === "update"}
-					>
-				
+				>
+
 					{productTypes.map((el: any, index) => (
 						<option
 							key={index}
@@ -964,512 +1022,551 @@ if(el.color_id == color_id){
 				{errors && <div className="valid-feedback">Looks good!</div>}
 			</div>
 			{
-				formData.type === "single"?(<div className="col-md-4">
-				<label htmlFor="price" className="form-label">
-					Price
-				</label>
-				<input
-					type="text"
-					className={
-						errors
-							? errors.price
-								? `form-control is-invalid`
-								: `form-control is-valid`
-							: "form-control"
-					}
-					id="price"
-					name="price"
-					onChange={handleChange}
-					value={formData.price}
-				/>
-				{errors?.price && (
-					<div className="invalid-feedback">{errors.price[0]}</div>
-				)}
-				{errors && <div className="valid-feedback">Looks good!</div>}
-			</div>):(null)
-			}
-			{
-				formData.type === "single"?(<div className="col-md-4">
-				<label htmlFor="qty" className="form-label">
-					Quantity
-				</label>
-				<input
-					type="text"
-					className={
-						errors
-							? errors.qty
-								? `form-control is-invalid`
-								: `form-control is-valid`
-							: "form-control"
-					}
-					id="qty"
-					name="qty"
-					onChange={handleChange}
-					value={formData.qty}
-				/>
-				{errors?.qty && (
-					<div className="invalid-feedback">{errors.qty[0]}</div>
-				)}
-				{errors && <div className="valid-feedback">Looks good!</div>}
-			</div>):(null)
-			}
-			{
-				formData.type === "variable"?(<div className="col-md-10 offset-md-1">
-				{/* head */}
-				<div className="row mb-2 ">
-				<div className="col-md-2 bg-success ">
-					 <div className="text-light">Color</div>
-					</div>
-					<div className="col-md-2 bg-success ">
-					 <div className="text-light">Height</div>
-					</div>
-					<div className="col-md-8 bg-success ">
-					<div className="text-light">Variation Values</div>
-					</div>
-				</div>
-				{/* head 2 */}
-				{
-					formData.variation.map((el,index) => {
-					  return (<div className="row " key={index}>
-						  {/* Color Start */}
-					<div className="col-md-2 ">
-					  <div className="">
-					  
-					  <select
-						  className={
-							  errors
-								  ? errors[`variation.${index}.color_id`]
-									  ? `form-control is-invalid`
-									  : `form-control is-valid`
-								  : "form-control"
-						  }
-						  id={`variation.${index}.color_id`}
-						  name={`variation.${index}.color_id`}
-						  onChange={handleVariationColorSelect}
-						  value={formData.variation[index].color_id}>
-						<option value="">Please Select</option>
-					{colors.map((el: any, index) => (
-						<option
-							key={index}
-							value={el.id}
-							style={{ textTransform: "uppercase" }}>
-							{el.name}
-						</option>
-					))}
-					  </select>
-					  {errors && (
-				<>	
-				{
-					errors[`variation.${index}.color_id`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
-
-				}
-				
-				</>
-					
-				)}
-					 
-				  </div>
-					  </div>
-						  {/* height Start */}
-					  <div className="col-md-2">
-					  <div className="">
-					  
-					  <select
-						  className={
-							  errors
-								  ? errors[`variation.${index}.variation_template_id`]
-									  ? `form-control is-invalid`
-									  : `form-control is-valid`
-								  : "form-control"
-						  }
-						  id={`variation.${index}.variation_template_id`}
-						  name={`variation.${index}.variation_template_id`}
-						  onChange={handleVariationSelect}
-						  value={formData.variation[index].variation_template_id}>
-						  <option value="">Please Select</option>
-						  {variationTemplates.map((el: any, index:any) => (
-							  <option
-								  key={index}
-								  value={el.id}
-								  style={{ textTransform: "uppercase" }}>
-								  {el.name}
-							  </option>
-						  ))}
-					  </select>
-					  {errors && (
-				<>	
-				{
-					errors[`variation.${index}.variation_template_id`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
-
-				}
-				
-				</>
-					
-				)}
-					 
-				  </div>
-					  </div>
-					  <div className="col-md-8">
-					  <div className="row ">
-									<div className="col-md-2 me-1   text-light bg-primary">Width</div>
-									<div className="col-md-2  me-1 text-light bg-primary">Price</div>
-									<div className="col-md-2 me-1  text-light bg-primary">Quantity</div>
-									<div className="col-md-2  me-1
-									 text-light bg-primary">Sku</div>
-									<div className="col-md-3">
-								<button className="btn  btn-primary"
-								//  style={{height:"0.1rem"}}
-								  	type="button" onClick={() => handleVariationValueAdd(index)}>+</button>	
-									<button className="btn  btn-danger"
-								//  style={{height:"0.1rem"}}
-								  	type="button" onClick={() => handleVariationDelete(index)}>-</button>	
-								</div>
-								 </div>
-						{
-							el.variation_value_template.length?(
-								el.variation_value_template.map((elv:any,vindex:any) => {
-									return 	(<div className="row mt-2">
-					{/* name start */}
-
-									<div className="col-md-2 me-1">
-								
+				formData.type === "single" ? (<div className="col-md-4">
+					<label htmlFor="price" className="form-label">
+						Price
+					</label>
 					<input
 						type="text"
 						className={
 							errors
-								? errors[`variation.${index}.variation_value_template.${vindex}.name`]
+								? errors.price
 									? `form-control is-invalid`
 									: `form-control is-valid`
 								: "form-control"
 						}
-						id={`variation.${index}.variation_value_template.${vindex}.name`}
-						name={`variation.${index}.variation_value_template.${vindex}.name`}
-						onChange={handleVariationValueChange}
-						value={formData.variation[index].variation_value_template[vindex].name}
+						id="price"
+						name="price"
+						onChange={handleChange}
+						value={formData.price}
 					/>
-					
-					
-					{errors && (
-				<>	
-				{
-					errors[`variation.${index}.variation_value_template.${vindex}.name`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
-
-				}
-				
-				</>
-					
-				)}
-					
-					
-					
-					</div>
-					{/* name end */}
-
-	{/* price start */}
-
-									<div className="col-md-2 me-1">
-								
+					{errors?.price && (
+						<div className="invalid-feedback">{errors.price[0]}</div>
+					)}
+					{errors && <div className="valid-feedback">Looks good!</div>}
+				</div>) : (null)
+			}
+			{
+				formData.type === "single" ? (<div className="col-md-4">
+					<label htmlFor="qty" className="form-label">
+						Quantity
+					</label>
 					<input
 						type="text"
 						className={
 							errors
-								? errors[`variation.${index}.variation_value_template.${vindex}.price`]
+								? errors.qty
 									? `form-control is-invalid`
 									: `form-control is-valid`
 								: "form-control"
 						}
-						id={`variation.${index}.variation_value_template.${vindex}.price`}
-						name={`variation.${index}.variation_value_template.${vindex}.price`}
-						onChange={handleVariationValueChange}
-						value={formData.variation[index].variation_value_template[vindex].price}
+						id="qty"
+						name="qty"
+						onChange={handleChange}
+						value={formData.qty}
 					/>
-					
-					
-					{errors && (
-				<>	
-				{
-					errors[`variation.${index}.variation_value_template.${vindex}.price`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
-
-				}
-				
-				</>
-					
-				)}
-					
-					
-					
+					{errors?.qty && (
+						<div className="invalid-feedback">{errors.qty[0]}</div>
+					)}
+					{errors && <div className="valid-feedback">Looks good!</div>}
+				</div>) : (null)
+			}
+			{
+				formData.type === "variable" ? (<div className="col-md-10 offset-md-1">
+					{/* head */}
+					<div className="row mb-2 ">
+						<div className="col-md-2 bg-success ">
+							<div className="text-light">Color</div>
+						</div>
+						<div className="col-md-2 bg-success ">
+							<div className="text-light">Height</div>
+						</div>
+						<div className="col-md-8 bg-success ">
+							<div className="text-light">Variation Values</div>
+						</div>
 					</div>
-					{/* price end */}
-	{/* quantity start */}
-					<div className="col-md-2 me-1">
-								
-								<input
-									type="text"
-									className={
-										errors
-											? errors[`variation.${index}.variation_value_template.${vindex}.qty`]
-												? `form-control is-invalid`
-												: `form-control is-valid`
-											: "form-control"
-									}
-									id={`variation.${index}.variation_value_template.${vindex}.qty`}
-									name={`variation.${index}.variation_value_template.${vindex}.qty`}
-									onChange={handleVariationValueChange}
-									value={formData.variation[index].variation_value_template[vindex].qty}
-								/>
-								
-								
-								{errors && (
-							<>	
-							{
-								errors[`variation.${index}.variation_value_template.${vindex}.qty`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
-			
-							}
-							
-							</>
-								
-							)}
-								
-								
-								
-								</div>
-{/* quantity end */}
-{/*  sku start */}
-<div className="col-md-2 me-1">
-								
-								<input
-									type="text"
-									className={
-										errors
-											? errors[`variation.${index}.variation_value_template.${vindex}.sub_sku`]
-												? `form-control is-invalid`
-												: `form-control is-valid`
-											: "form-control"
-									}
-									id={`variation.${index}.variation_value_template.${vindex}.sub_sku`}
-									name={`variation.${index}.variation_value_template.${vindex}.sub_sku`}
-									onChange={handleVariationValueChange}
-									value={formData.variation[index].variation_value_template[vindex].sub_sku}
-								/>
-								
-								
-								{errors && (
-							<>	
-							{
-								errors[`variation.${index}.variation_value_template.${vindex}.sub_sku`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
-			
-							}
-							
-							</>
-								
-							)}
-								
-								
-								
-								</div>
-{/* sku end */}
+					{/* head 2 */}
+					{
+						formData.variation.map((el, index) => {
+							return (<div className="row " key={index}>
+								{/* Color Start */}
+								<div className="col-md-2 ">
+									<div className="">
 
+										<select
+											className={
+												errors
+													? errors[`variation.${index}.color_id`]
+														? `form-control is-invalid`
+														: `form-control is-valid`
+													: "form-control"
+											}
+											id={`variation.${index}.color_id`}
+											name={`variation.${index}.color_id`}
+											onChange={handleVariationColorSelect}
+											value={formData.variation[index].color_id}>
+											<option value="">Please Select</option>
+											{colors.map((el: any, index) => (
+												<option
+													key={index}
+													value={el.id}
+													style={{ textTransform: "uppercase" }}>
+													{el.name}
+												</option>
+											))}
+										</select>
+										{errors && (
+											<>
+												{
+													errors[`variation.${index}.color_id`] ? (<div className="invalid-feedback">This field is required</div>) : (<div className="valid-feedback">Looks good!</div>)
+
+												}
+
+											</>
+
+										)}
+
+									</div>
+								</div>
+								{/* height Start */}
 								<div className="col-md-2">
-								<button className="btn  btn-danger"
-								//  style={{height:"0.1rem"}}
-								  	type="button" onClick={() => handleVariationValueDelete(index,vindex)}>-</button>	
+									<div className="">
+
+										<select
+											className={
+												errors
+													? errors[`variation.${index}.variation_template_id`]
+														? `form-control is-invalid`
+														: `form-control is-valid`
+													: "form-control"
+											}
+											id={`variation.${index}.variation_template_id`}
+											name={`variation.${index}.variation_template_id`}
+											onChange={handleVariationSelect}
+											value={formData.variation[index].variation_template_id}>
+											<option value="">Please Select</option>
+											{variationTemplates.map((el: any, index: any) => (
+												<option
+													key={index}
+													value={el.id}
+													style={{ textTransform: "uppercase" }}>
+													{el.name}
+												</option>
+											))}
+										</select>
+										{errors && (
+											<>
+												{
+													errors[`variation.${index}.variation_template_id`] ? (<div className="invalid-feedback">This field is required</div>) : (<div className="valid-feedback">Looks good!</div>)
+
+												}
+
+											</>
+
+										)}
+
+									</div>
 								</div>
+								<div className="col-md-8">
+									<div className="row ">
+										<div className="col-md-2 me-1   text-light bg-primary">Width</div>
+										<div className="col-md-2  me-1 text-light bg-primary">Price</div>
+										<div className="col-md-2 me-1  text-light bg-primary">Quantity</div>
+										<div className="col-md-2  me-1
+									 text-light bg-primary">Sku</div>
+										<div className="col-md-3">
+											<button className="btn  btn-primary"
+												//  style={{height:"0.1rem"}}
+												type="button" onClick={() => handleVariationValueAdd(index)}>+</button>
+											<button className="btn  btn-danger"
+												//  style={{height:"0.1rem"}}
+												type="button" onClick={() => handleVariationDelete(index)}>-</button>
+										</div>
+									</div>
+									{
+										el.variation_value_template.length ? (
+											el.variation_value_template.map((elv: any, vindex: any) => {
+												return (<div className="row mt-2">
+													{/* name start */}
+
+													<div className="col-md-2 me-1">
+
+														<input
+															type="text"
+															className={
+																errors
+																	? errors[`variation.${index}.variation_value_template.${vindex}.name`]
+																		? `form-control is-invalid`
+																		: `form-control is-valid`
+																	: "form-control"
+															}
+															id={`variation.${index}.variation_value_template.${vindex}.name`}
+															name={`variation.${index}.variation_value_template.${vindex}.name`}
+															onChange={handleVariationValueChange}
+															value={formData.variation[index].variation_value_template[vindex].name}
+														/>
+
+
+														{errors && (
+															<>
+																{
+																	errors[`variation.${index}.variation_value_template.${vindex}.name`] ? (<div className="invalid-feedback">This field is required</div>) : (<div className="valid-feedback">Looks good!</div>)
+
+																}
+
+															</>
+
+														)}
+
+
+
+													</div>
+													{/* name end */}
+
+													{/* price start */}
+
+													<div className="col-md-2 me-1">
+
+														<input
+															type="text"
+															className={
+																errors
+																	? errors[`variation.${index}.variation_value_template.${vindex}.price`]
+																		? `form-control is-invalid`
+																		: `form-control is-valid`
+																	: "form-control"
+															}
+															id={`variation.${index}.variation_value_template.${vindex}.price`}
+															name={`variation.${index}.variation_value_template.${vindex}.price`}
+															onChange={handleVariationValueChange}
+															value={formData.variation[index].variation_value_template[vindex].price}
+														/>
+
+
+														{errors && (
+															<>
+																{
+																	errors[`variation.${index}.variation_value_template.${vindex}.price`] ? (<div className="invalid-feedback">This field is required</div>) : (<div className="valid-feedback">Looks good!</div>)
+
+																}
+
+															</>
+
+														)}
+
+
+
+													</div>
+													{/* price end */}
+													{/* quantity start */}
+													<div className="col-md-2 me-1">
+
+														<input
+															type="text"
+															className={
+																errors
+																	? errors[`variation.${index}.variation_value_template.${vindex}.qty`]
+																		? `form-control is-invalid`
+																		: `form-control is-valid`
+																	: "form-control"
+															}
+															id={`variation.${index}.variation_value_template.${vindex}.qty`}
+															name={`variation.${index}.variation_value_template.${vindex}.qty`}
+															onChange={handleVariationValueChange}
+															value={formData.variation[index].variation_value_template[vindex].qty}
+														/>
+
+
+														{errors && (
+															<>
+																{
+																	errors[`variation.${index}.variation_value_template.${vindex}.qty`] ? (<div className="invalid-feedback">This field is required</div>) : (<div className="valid-feedback">Looks good!</div>)
+
+																}
+
+															</>
+
+														)}
+
+
+
+													</div>
+													{/* quantity end */}
+													{/*  sku start */}
+													<div className="col-md-2 me-1">
+
+														<input
+															type="text"
+															className={
+																errors
+																	? errors[`variation.${index}.variation_value_template.${vindex}.sub_sku`]
+																		? `form-control is-invalid`
+																		: `form-control is-valid`
+																	: "form-control"
+															}
+															id={`variation.${index}.variation_value_template.${vindex}.sub_sku`}
+															name={`variation.${index}.variation_value_template.${vindex}.sub_sku`}
+															onChange={handleVariationValueChange}
+															value={formData.variation[index].variation_value_template[vindex].sub_sku}
+														/>
+
+
+														{errors && (
+															<>
+																{
+																	errors[`variation.${index}.variation_value_template.${vindex}.sub_sku`] ? (<div className="invalid-feedback">This field is required</div>) : (<div className="valid-feedback">Looks good!</div>)
+
+																}
+
+															</>
+
+														)}
+
+
+
+													</div>
+													{/* sku end */}
+
+													<div className="col-md-2">
+														<button className="btn  btn-danger"
+															//  style={{height:"0.1rem"}}
+															type="button" onClick={() => handleVariationValueDelete(index, vindex)}>-</button>
+													</div>
 
 
 
 
-								 </div>)
-								})
-							):(null)
-						}
-							 
-				
-						 
-					  
-					  </div>
-				  </div>)
-					})
-				}
-				
-			</div>):(null)
+												</div>)
+											})
+										) : (null)
+									}
+
+
+
+
+								</div>
+							</div>)
+						})
+					}
+
+				</div>) : (null)
 			}
 			{
-				formData.type === "variable"?(<div className="text-center">
-		
-				<button className="btn btn-primary" 	type="button" onClick={AddVariation}>+</button>
-				
-				</div>):(null)
+				formData.type === "variable" ? (<div className="text-center">
+
+					<button className="btn btn-primary" type="button" onClick={AddVariation}>+</button>
+
+				</div>) : (null)
 			}
 			{/* 
 			 */}
-			 <br />
-			 <br />
-			 {/* colors */}
-			 <div className="row mt-5">
-				 <h4 className="text-center">
-					 Colors
-				 </h4>
-			 </div>
-			 <div className="row">
-				 <div className="col-md-8 offset-2">
-			 
-
-<div className="row">
-	<div className="col-md-3">
-		Colors
-	</div>
-
-	<div className="col-md-3">Code</div>
-	<div className="col-md-3">Image</div>
-	<div className="col-md-3">Action</div>
-
-		
-</div>
-
-
-		 {
-					formData.colors.map( (el,index) => {
-						console.log(formData.colors[index].color_id)
-						return (
-				<div className="row mt-4 mb-4" key={index}>
-					{/* colors */}
-					<div className="col-md-3">
-					<select
-					className={
-						errors
-							? errors[`colors.${index}.color_id`]
-								? `form-control is-invalid`
-								: `form-control is-valid`
-							: "form-control"
-					}
-					id={`colors.${index}.color_id`}
-					name={`colors.${index}.color_id`}
-					onChange={handleColorSelect}
-
-					value={formData.colors[index].color_id}>
-					<option value="">Please Select</option>
-					{colors.map((el: any, index) => (
-						<option
-							key={index}
-							value={el.id}
-							style={{ textTransform: "uppercase" }}>
-							{el.name}
-						</option>
-					))}
-				</select>
-				{errors && (
-				<>	
-				{
-					errors[`colors.${index}.color_id`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
-
-				}
-				
-				</>
-					
-				)}
-					</div>
-				
-			{/*  color name */}
-		
-			{/* color code */}
-			<div className="col-md-3">
-<input
-					type="text"
-					className={
-						errors
-							? errors[`colors.${index}.code`]
-								? `form-control is-invalid`
-								: `form-control is-valid`
-							: "form-control"
-					}
-					id={`colors.${index}.code`}
-					name={`colors.${index}.code`}
-				readOnly
-					onChange={handleColorChange}
-					value={formData.colors[index].code}
-				/>
-				
-			
-				{errors && (
-				<>	
-				{
-					errors[`colors.${index}.code`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
-
-				}
-				
-				</>
-					
-				)}
-			
-
-			
-			</div>
-{/* end color code */}
-{/* color image */}
-
-<div className="col-md-3">
-<input
-					type="file"
-					className={
-						errors
-							? errors[`colors.${index}.color_image`]
-								? `form-control is-invalid`
-								: `form-control is-valid`
-							: "form-control"
-					}
-					id={`colors.${index}.color_image`}
-					name={`colors.${index}.color_image`}
-				readOnly
-					onChange={handleColorImageChange}
-					
-				/>
-				
-			
-				{errors && (
-				<>	
-				{
-					errors[`colors.${index}.color_image`] ? (<div className="invalid-feedback">This field is required</div>):(<div className="valid-feedback">Looks good!</div>)
-
-				}
-				
-				</>
-					
-				)}
-			
-
-			
-			</div>
-{/* end color image */}
-<div className="col-md-3">
-          
-		  <button className="btn btn-danger " 	type="button" onClick={() => {
-deleteColor(index)
-		  }}>-</button>
-			  
-		  </div>
 			<br />
+			<br />
+			{/* colors */}
+			<div className="row mt-5">
+				<h4 className="text-center">
+					Colors
+				</h4>
 			</div>
+			<div className="row">
+				<div className="col-md-12 ">
+
+
+					<div className="row">
+						<div className="col-md-3">
+							Colors
+						</div>
+
+						<div className="col-md-3">Code</div>
+						<div className="col-md-3">Image</div>
+						<div className="col-md-3">Action</div>
+
+
+					</div>
+
+
+					{
+						formData.colors.map((el, index) => {
+							console.log(formData.colors[index].color_id)
+							return (
+								<div className="row mt-4 mb-4" key={index}>
+									{/* colors */}
+									<div className="col-md-3">
+										<select
+											className={
+												errors
+													? errors[`colors.${index}.color_id`]
+														? `form-control is-invalid`
+														: `form-control is-valid`
+													: "form-control"
+											}
+											id={`colors.${index}.color_id`}
+											name={`colors.${index}.color_id`}
+											onChange={handleColorSelect}
+
+											value={formData.colors[index].color_id}>
+											<option value="">Please Select</option>
+											{colors.map((el: any, index) => (
+												<option
+													key={index}
+													value={el.id}
+													style={{ textTransform: "uppercase" }}>
+													{el.name}
+												</option>
+											))}
+										</select>
+										{errors && (
+											<>
+												{
+													errors[`colors.${index}.color_id`] ? (<div className="invalid-feedback">This field is required</div>) : (<div className="valid-feedback">Looks good!</div>)
+
+												}
+
+											</>
+
+										)}
+									</div>
+
+									{/*  color name */}
+
+									{/* color code */}
+									<div className="col-md-3">
+										<input
+											type="text"
+											className={
+												errors
+													? errors[`colors.${index}.code`]
+														? `form-control is-invalid`
+														: `form-control is-valid`
+													: "form-control"
+											}
+											id={`colors.${index}.code`}
+											name={`colors.${index}.code`}
+											readOnly
+											onChange={handleColorChange}
+											value={formData.colors[index].code}
+										/>
+
+
+										{errors && (
+											<>
+												{
+													errors[`colors.${index}.code`] ? (<div className="invalid-feedback">This field is required</div>) : (<div className="valid-feedback">Looks good!</div>)
+
+												}
+
+											</>
+
+										)}
+
+
+
+									</div>
+									{/* end color code */}
+									{/* color image */}
+
+									<div className="col-md-3">
+										<input
+											type="file"
+											className={
+												errors
+													? errors[`colors.${index}.color_image`]
+														? `form-control is-invalid`
+														: `form-control is-valid`
+													: "form-control"
+											}
+											id={`colors.${index}.color_image`}
+											name={`colors.${index}.color_image`}
+											readOnly
+											onChange={handleColorImageChange}
+
+										/>
+
+
+										{errors && (
+											<>
+												{
+													errors[`colors.${index}.color_image`] ? (<div className="invalid-feedback">This field is required</div>) : (<div className="valid-feedback">Looks good!</div>)
+
+												}
+
+											</>
+
+										)}
+
+
+
+									</div>
+									{/* end color image */}
+									<div className="col-md-3">
+
+										<button className="btn btn-danger " type="button" onClick={() => {
+											deleteColor(index)
+										}}>-</button>
+
+									</div>
+									<br />
+								</div>
+
+
+							)
+						})
+					}
+
+
+
+
+				</div>
+				<div className="row">
+					<div className="col-md-8 offset-2">
+						<div className="text-center">
+
+							<button className="btn btn-primary" type="button" onClick={() => AddColor("")}>+</button>
+
+						</div>
+					</div>
+				</div>
+			</div>
+			{/* end of colors */}
+
+			<div className="row mt-5">
+				<h3 className="text-center">
+				Options
+				</h3>
+				{
+					options.length?(
+						options.map((el:any) => {
+							return (<div className="col-md-3" key={el.id}>
+									<div className="form-check">
+											<input
+												className="form-check-input"
+												name="option"
+												type={"checkbox"} 
+												checked={el.selected}
+												id={`option-${el.id}`}
+												value={el.id}
+												 onChange={handleOptionChecked}
+											/>
+
+											<label
+												className="form-check-label"
+												htmlFor={`option-${el.id}`}>
+												{el.name}
+											</label>
+										</div>
 					
-					
-					)})
+                            
+							</div>)
+						})
+						
+					):(null)
 				}
-
-
-
-
-				 </div>
-				 <div className="row">
-					 <div className="col-md-8 offset-2">
-					 <div className="text-center">
-		
-			<button className="btn btn-primary" 	type="button" onClick={() =>AddColor("")}>+</button>
-			
+                 
 			</div>
-					 </div>
-				 </div>
-			 </div>
-			 {/* end of colors */}
-		
+
+
+
+
 			<div className="text-center">
 				<button type="submit" className="btn btn-primary me-2">
 					Submit

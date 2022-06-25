@@ -90,7 +90,12 @@ export const adminSideBarData: NavInterface[] = [
 				link: ROUTE_LIST.listCategory,
 				permissions: [],
 			},
-
+			{
+				name: "Option",
+				link: ROUTE_LIST.listOptionTemplate,
+				permissions: [],
+			},
+			
 		],
 	},
 
