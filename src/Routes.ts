@@ -57,6 +57,8 @@ import ListStylePage from "./pages/AdminPages/Product/Style/ListStylePage";
 import AddStylePage from "./pages/AdminPages/Product/Style/AddStylePage";
 import AddOptionPage from "./pages/AdminPages/Product/Option/AddOptionTemplatePage";
 import ListOptionTemplatePage from "./pages/AdminPages/Product/Option/ListOptionTemplatePage";
+import ListMenuPage from "./pages/AdminPages/Setting/Menu/ListMenuPage";
+import AddMenuPage from "./pages/AdminPages/Setting/Menu/AddMenuPage";
 
 
 
@@ -86,6 +88,28 @@ export const RouteData: RouteInterface[] = [
 		exact: true,
 		component: Admin,
 	},
+
+
+	{
+		path: ROUTE_LIST.listMenu,
+		exact: true,
+		component: ListMenuPage,
+	},
+	{
+		path: ROUTE_LIST.createMenu,
+		exact: false,
+		component: AddMenuPage,
+	},
+
+
+
+
+
+
+
+
+
+
 
 	// wings
 	{

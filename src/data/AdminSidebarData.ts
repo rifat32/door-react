@@ -28,6 +28,17 @@ export const adminSideBarData: NavInterface[] = [
 	// 	],
 	// },
 	{
+		name: "Setting",
+		list: [
+			{
+				name: "Menu",
+				link: "/admin/settings/menu",
+				permissions: [],
+			},
+		
+		],
+	},
+	{
 		name: "User Management",
 		list: [
 			{
