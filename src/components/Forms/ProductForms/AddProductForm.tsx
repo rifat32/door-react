@@ -21,7 +21,9 @@ interface FormData {
 	image: "";
 	is_featured: string;
 	images: string[];
-	colors: Colors[]
+	colors: Colors[];
+	length_lower_limit:string;
+	length_upper_limit:string;
 
 }
 interface Variation {
@@ -72,7 +74,9 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 				color_image: "",
 				is_variation_specific: false
 			}
-		]
+		],
+	length_lower_limit:"",
+	length_upper_limit:"",
 
 	});
 	const [imageFile, setImageFile] = useState<any>();
@@ -581,7 +585,9 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 					color_image: "",
 					is_variation_specific: false
 				}
-			]
+			],
+	length_lower_limit:"",
+	length_upper_limit:"",
 		});
 	};
 	const handleSubmit = (e: React.FormEvent) => {
@@ -637,7 +643,13 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 			.get(`${BACKENDAPI}/v1.0/products/${id}`)
 			.then((response: any) => {
 				console.log(response);
-				const { id, name, category_id, style_id, sku, description, type, product_variations, variations, image, colors, status, is_featured,options:productOptions } = response.data.product
+				const { id, name, category_id, style_id, sku, description, type, product_variations, variations, image, colors, status, is_featured,options:productOptions
+					,
+					length_lower_limit,
+					length_upper_limit,
+				
+				
+				} = response.data.product
 
 				
 			apiClient()
@@ -709,7 +721,9 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 					image,
 					colors: tempColors,
 					status,
-					is_featured
+					is_featured,
+					length_lower_limit,
+					length_upper_limit
 				})
 				// setCategories(response.data.data);
 			})
@@ -738,8 +752,8 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 				console.log(response);
 				toast.success("Data Updated");
 
-				props.updateDataStates(response.data.data);
-				props.showModal(false);
+				// props.updateDataStates(response.data.data);
+				// props.showModal(false);
 			})
 			.catch((error) => {
 				console.log(error);
@@ -753,6 +767,7 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 
 	return (
 		<form className="row g-3" onSubmit={handleSubmit}>
+		
 			<div className="col-md-4">
 				<label htmlFor="name" className="form-label">
 					Product Name
@@ -1564,6 +1579,56 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
                  
 			</div>
 
+<div className="row">
+
+	
+			<div className="col-md-4">
+				<label htmlFor="length_lower_limit" className="form-label">
+				length lower limit
+				</label>
+				<input
+					type="text"
+					className={
+						errors
+							? errors.length_lower_limit
+								? `form-control is-invalid`
+								: `form-control is-valid`
+							: "form-control"
+					}
+					id="length_lower_limit"
+					name="length_lower_limit"
+					onChange={handleChange}
+					value={formData.length_lower_limit}
+				/>
+				{errors?.length_lower_limit && (
+					<div className="invalid-feedback">{errors.length_lower_limit[0]}</div>
+				)}
+				{errors && <div className="valid-feedback">Looks good!</div>}
+			</div>
+			<div className="col-md-4">
+				<label htmlFor="length_upper_limit" className="form-label">
+				length upper limit
+				</label>
+				<input
+					type="text"
+					className={
+						errors
+							? errors.length_upper_limit
+								? `form-control is-invalid`
+								: `form-control is-valid`
+							: "form-control"
+					}
+					id="length_upper_limit"
+					name="length_upper_limit"
+					onChange={handleChange}
+					value={formData.length_upper_limit}
+				/>
+				{errors?.length_upper_limit && (
+					<div className="invalid-feedback">{errors.length_upper_limit[0]}</div>
+				)}
+				{errors && <div className="valid-feedback">Looks good!</div>}
+			</div>
+</div>
 
 
 

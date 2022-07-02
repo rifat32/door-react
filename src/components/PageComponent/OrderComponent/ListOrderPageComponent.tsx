@@ -5,10 +5,11 @@ import CustomModal from "../../Modal/Modal";
 import { toast } from "react-toastify";
 
 import AddCouponForm from "../../Forms/CouponForms/AddCouponForm";
+import { Link, withRouter } from "react-router-dom";
 
 
 
-const ListOrderPageComponent: React.FC = () => {
+const ListOrderPageComponent: React.FC = (props:any) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [data, setData] = useState<any>([]);
 	const [modalIsOpen, setIsOpen] = React.useState(false);
@@ -69,7 +70,9 @@ const ListOrderPageComponent: React.FC = () => {
 				});
 		}
 	};
-
+	const viewOrder = (id:any) => {
+		props.history.push(`/admin/orders/${id}`);
+	}
 	return (
 		<>
 			<table className="table">
@@ -89,54 +92,63 @@ const ListOrderPageComponent: React.FC = () => {
 					<tbody>
 						{data.map((el: any) => {
 							return (
-								<tr key={el.id}>
-									<td>{el.id}</td>
-									<td>{el.fname && el.fname}</td>
-									<td>{el.fname && el.lname}</td>
-									<td>{el.fname && el.email}</td>
-									<td>{el.fname && new Date(el.created_at).toDateString()}</td>
-									<td>Pending</td>
-									<td>
-										<div className="btn-group">
-											<button
-												type="button"
-												className="btn btn-sm btn-primary dropdown-toggle"
-												data-bs-toggle="dropdown"
-												aria-expanded="false">
-												Action
-											</button>
-											<ul className="dropdown-menu action">
-												<li>
-													<a
-														onClick={() => {
-															setCurrentData(el);
-															showModal(true);
-														}}
-														className="dropdown-item"
-														href="#">
-														edit
-													</a>
-												</li>
-												<li>
-													<hr className="dropdown-divider" />
-												</li>
-												<li>
-													<a
-														onClick={() => {
-															deleteData(el.id);
-														}}
-														className="dropdown-item"
-														href="#">
-														delete
-													</a>
-												</li>
-												<li>
-													<hr className="dropdown-divider" />
-												</li>
-											</ul>
-										</div>
-									</td>
-								</tr>
+							
+<tr key={el.id} onClick={() => viewOrder(el.id)}
+
+style={{
+	cursor:"pointer"
+}}
+>
+
+<td>{el.id}</td>
+<td> {el.fname && el.fname}</td>
+<td>{el.fname && el.lname}</td>
+<td>{el.fname && el.email}</td>
+<td>{el.fname && new Date(el.created_at).toDateString()}</td>
+<td>{el.status}</td>
+<td>
+	<div className="btn-group">
+		<button
+			type="button"
+			className="btn btn-sm btn-primary dropdown-toggle"
+			data-bs-toggle="dropdown"
+			aria-expanded="false">
+			Action
+		</button>
+		<ul className="dropdown-menu action">
+			<li>
+				<a
+					onClick={() => {
+						setCurrentData(el);
+						showModal(true);
+					}}
+					className="dropdown-item"
+					href="#">
+					edit
+				</a>
+			</li>
+			<li>
+				<hr className="dropdown-divider" />
+			</li>
+			<li>
+				<a
+					onClick={() => {
+						deleteData(el.id);
+					}}
+					className="dropdown-item"
+					href="#">
+					delete
+				</a>
+			</li>
+			<li>
+				<hr className="dropdown-divider" />
+			</li>
+		</ul>
+	</div>
+</td>
+</tr>
+								
+								
 							);
 						})}
 					</tbody>
@@ -163,7 +175,7 @@ const ListOrderPageComponent: React.FC = () => {
                      loading?("Loading.."):("No data to show")
 				)}
 			</div>
-			<CustomModal
+			{/* <CustomModal
 				isOpen={modalIsOpen}
 				showModal={showModal}
 				type="Update Coupon">
@@ -173,9 +185,9 @@ const ListOrderPageComponent: React.FC = () => {
 					showModal={showModal}
 					type="update"
 				/>
-			</CustomModal>
+			</CustomModal> */}
 		</>
 	);
 };
 
-export default ListOrderPageComponent;
+export default withRouter(ListOrderPageComponent);

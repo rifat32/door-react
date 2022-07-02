@@ -59,6 +59,7 @@ import AddOptionPage from "./pages/AdminPages/Product/Option/AddOptionTemplatePa
 import ListOptionTemplatePage from "./pages/AdminPages/Product/Option/ListOptionTemplatePage";
 import ListMenuPage from "./pages/AdminPages/Setting/Menu/ListMenuPage";
 import AddMenuPage from "./pages/AdminPages/Setting/Menu/AddMenuPage";
+import OrderViewPage from "./pages/AdminPages/Order/OrderView";
 
 
 
@@ -253,6 +254,12 @@ export const RouteData: RouteInterface[] = [
 		path: ROUTE_LIST.listOrder,
 		exact: true,
 		component: ListOrderPage,
+	},
+
+	{
+		path: ROUTE_LIST.orderView,
+		exact: true,
+		component: OrderViewPage,
 	},
 	
 

@@ -37,6 +37,8 @@ export enum ROUTE_LIST {
     
     listCoupon="/admin/coupon",
     listOrder="/admin/orders",
+    orderView="/admin/orders/:id",
+
 
     listMenu="/admin/settings/menu",
     createMenu="/admin/settings/menu/create",
