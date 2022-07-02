@@ -8,6 +8,14 @@
 /*--------------------------------------------------------------
 # General
 --------------------------------------------------------------*/
+.trhover{
+cursor: pointer;
+}
+.trhover:hover{
+  background-color: 	rgba(241, 242, 243,0.6);
+  
+}
+
 :root {
   scroll-behavior: smooth;
 }
