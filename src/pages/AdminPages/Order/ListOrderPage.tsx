@@ -4,6 +4,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import AdminPageComponent from "../../../components/PageComponent/AdminPageComponent";
 import ListCouponPageComponent from "../../../components/PageComponent/CouponComponent/ListCouponPageComponent";
+import ListCustomerOrderPageComponent from "../../../components/PageComponent/OrderComponent/ListCustomerOrderPageComponent";
 import ListOrderPageComponent from "../../../components/PageComponent/OrderComponent/ListOrderPageComponent";
 
 import ListCategoryPageComponent from "../../../components/PageComponent/ProductComponent/ListCategoryPageComponent";
@@ -13,7 +14,11 @@ import { ROUTE_LIST } from "../../../RoutConstants";
 
 
 
-const ListOrderPage: React.FC = () => {
+const ListOrderPage: React.FC = (props:any) => {
+
+
+
+
 	return (
 		<AdminPageComponent>
 			<main id="main" className="main">
@@ -43,7 +48,11 @@ const ListOrderPage: React.FC = () => {
 											Add Data
 										</Link> */}
 									</div>
-									<ListOrderPageComponent />
+									{
+props.match.params.customerId?<ListCustomerOrderPageComponent customerId={props.match.params.customerId}/>:<ListOrderPageComponent   />
+									}
+									
+									
 								</div>
 							</div>
 						</div>

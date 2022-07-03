@@ -60,6 +60,8 @@ import ListOptionTemplatePage from "./pages/AdminPages/Product/Option/ListOption
 import ListMenuPage from "./pages/AdminPages/Setting/Menu/ListMenuPage";
 import AddMenuPage from "./pages/AdminPages/Setting/Menu/AddMenuPage";
 import OrderViewPage from "./pages/AdminPages/Order/OrderView";
+import ListCustomerPage from "./pages/AdminPages/Customer/ListCustomerPage";
+import CustomerViewPage from "./pages/AdminPages/Customer/ViewCustomer";
 
 
 
@@ -220,6 +222,11 @@ export const RouteData: RouteInterface[] = [
 		component: ListCategoryPage,
 	},
 	{
+		path: ROUTE_LIST.listCustomers,
+		exact: true,
+		component: ListCustomerPage,
+	},
+	{
 		path: ROUTE_LIST.createCategory,
 		exact: false,
 		component: AddCategoryPage,
@@ -255,12 +262,23 @@ export const RouteData: RouteInterface[] = [
 		exact: true,
 		component: ListOrderPage,
 	},
-
+	{
+		path: ROUTE_LIST.listOrderByCustomer,
+		exact: true,
+		component: ListOrderPage,
+	},
+	
 	{
 		path: ROUTE_LIST.orderView,
 		exact: true,
 		component: OrderViewPage,
 	},
+	{
+		path: ROUTE_LIST.viewCustomer,
+		exact: true,
+		component: CustomerViewPage,
+	},
+	
 	
 
 	// Requisitions

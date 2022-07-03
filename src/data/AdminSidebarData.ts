@@ -134,6 +134,18 @@ export const adminSideBarData: NavInterface[] = [
 			
 		],
 	},
+	{
+		name: "Customer",
+		list: [
+			{
+				name: "Customer List",
+				link: ROUTE_LIST.listCustomers,
+				permissions: [],
+			},
+		
+			
+		],
+	},
 	
 	
 

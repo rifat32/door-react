@@ -35,9 +35,22 @@ export enum ROUTE_LIST {
     createCoupon="/admin/coupon/create",
     editCoupon="/admin/coupon/edit/:id",
     
+
     listCoupon="/admin/coupon",
     listOrder="/admin/orders",
+
+
+
+    listOrderByCustomer="/admin/orders/customer/:customerId",
+
+
+
+
     orderView="/admin/orders/:id",
+    viewCustomer="/admin/customers/:id",
+    
+    listCustomers="/admin/customers",
+
 
 
     listMenu="/admin/settings/menu",

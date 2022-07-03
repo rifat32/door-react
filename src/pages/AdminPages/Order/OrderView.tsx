@@ -85,19 +85,23 @@ const OrderViewPage: React.FC = (props: any) => {
       name: "From Bottom",
     },
   ];
-  const orderStatusChange = (status: string) => {
-    apiClient()
-      .post(`${BACKENDAPI}/v1.0/orders/status/${props.match.params.id}`, {
-        status: status,
-      })
-      .then((response: any) => {
-        console.log(response);
-        window.location.reload();
-      })
-      .catch((error) => {
-        console.log(error.response);
-      });
-  };
+  
+  const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (window.confirm("Are you sure  want to change order status")) {
+		  apiClient()
+    .post(`${BACKENDAPI}/v1.0/orders/status/${props.match.params.id}`, {
+      status: e.target.value,
+    })
+    .then((response: any) => {
+      console.log(response);
+      window.location.reload();
+    })
+    .catch((error) => {
+      console.log(error.response);
+    });
+		}
+  
+	};
   return (
     <AdminPageComponent>
       <main id="main" className="main">
@@ -261,17 +265,28 @@ const OrderViewPage: React.FC = (props: any) => {
 
                               <div className="row my-2">
                                 <div className="col-6 offset-6">
-                                  {order.status !== "pending" ? null : (
-                                    <button
-                                      onClick={() =>
-                                        orderStatusChange("complete")
-                                      }
-                                      type="button"
-                                      className="btn btn-sm btn-success"
-                                    >
-                                      Complete Order
-                                    </button>
-                                  )}
+                                  
+                                <div className="col-md-12">
+			
+				<select
+					className="form-select"
+					
+					id="status"
+					name="status"
+					onChange={handleSelect}
+					value={order.status}>
+					<option value="Pending Payment">Pending Payment</option>
+          <option value="Processing">Processing</option>
+          <option value="On Hold">On Hold</option>
+          <option value="Completed">Completed</option>
+          <option value="Cancelled">Cancelled</option>
+          <option value="Refunded">Refunded</option>
+          <option value="Failed">Failed</option>
+          <option value="Draft">Draft</option>
+				</select>
+			
+			</div>
+                                  
                                 </div>
                               </div>
                             </div>
@@ -311,7 +326,7 @@ const OrderViewPage: React.FC = (props: any) => {
                                   <small>${orderInfo.tax}</small>
                                 </div>
                               </div>
-                              {orderInfo.coupon == 0 ? null : (
+                              {(!orderInfo.coupon) ? null : (
                                 <div className="row justify-content-between">
                                   <div className="col-4">
                                     <small> Coupon</small>
@@ -343,7 +358,7 @@ const OrderViewPage: React.FC = (props: any) => {
                                     {orderInfo.subTotal +
                                       orderInfo.tax +
                                       orderInfo.shipping -
-                                      orderInfo.coupon}
+                                      (orderInfo.coupon?orderInfo.coupon:0)}
                                   </small>
                                 </div>
                               </div>
