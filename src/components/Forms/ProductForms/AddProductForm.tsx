@@ -631,9 +631,12 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 				// resetFunction();
 			})
 			.catch((error) => {
-				console.log(error.response);
-				invalidInputHandler(error.response)
-				ErrorMessage(error.response)
+				console.log(error);
+				if(error.response) {
+					invalidInputHandler(error.response)
+					ErrorMessage(error.response)
+				}
+				
 			});
 	};
 	// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -739,6 +742,8 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 
 			return
 			setFormData(props.value);
+		} else if(props.type == "duplicate") {
+			loadProduct(props.value.id)
 		}
 	}, []);
 	const updateData = () => {
