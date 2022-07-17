@@ -2,12 +2,9 @@ import React, { useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 import AdminPageComponent from "../../../components/PageComponent/AdminPageComponent";
-import ListCouponPageComponent from "../../../components/PageComponent/CouponComponent/ListCouponPageComponent";
-import ListOrderPageComponent from "../../../components/PageComponent/OrderComponent/ListOrderPageComponent";
 
-import ListCategoryPageComponent from "../../../components/PageComponent/ProductComponent/ListCategoryPageComponent";
 import { BACKEND, BACKENDAPI } from "../../../config";
-import { ROUTE_LIST } from "../../../RoutConstants";
+
 import { apiClient } from "../../../utils/apiClient";
 
 const CustomerViewPage: React.FC = (props: any) => {

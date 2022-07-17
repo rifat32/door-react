@@ -24,6 +24,8 @@ interface FormData {
 	colors: Colors[];
 	length_lower_limit:string;
 	length_upper_limit:string;
+	length_is_required:string;
+	options:Options[]
 
 }
 interface Variation {
@@ -39,6 +41,13 @@ interface Colors {
 	color_id: string;
 	color_image: string,
 	is_variation_specific: boolean,
+}
+interface Options {
+	id: string;
+	option_id: string;
+	color_id: string;
+	is_required:string;
+
 }
 const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 	const [formData, setFormData] = useState<FormData>({
@@ -77,7 +86,16 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 		],
 	length_lower_limit:"",
 	length_upper_limit:"",
-
+	length_is_required:"0",
+	options:[
+		{
+			id: "",
+			option_id: "",
+			color_id: "",
+			is_required:"0",
+		
+		}
+	]
 	});
 	const [imageFile, setImageFile] = useState<any>();
 	const [categories, setCategories] = useState([]);
@@ -470,6 +488,59 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 		}
 
 	};
+	const handleOptionColorSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		let index: number = parseInt(e.target.name.split(".")[1])
+
+		let value = e.target.value
+
+		if (value) {
+			let color: any = colors.find((el: any) => {
+				return parseInt(el.id) == parseInt(value)
+			})
+
+			const tempValues = JSON.parse(JSON.stringify(formData.options))
+
+			tempValues[index].id = "";
+			tempValues[index].color_id = color.id;
+			setFormData({ ...formData, options: tempValues });
+		}
+
+	};
+	const handleOptionSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		let index: number = parseInt(e.target.name.split(".")[1])
+
+		let value = e.target.value
+
+		if (value) {
+			let option: any = options.find((el: any) => {
+				return parseInt(el.id) == parseInt(value)
+			})
+
+			const tempValues = JSON.parse(JSON.stringify(formData.options))
+
+			tempValues[index].id = "";
+			tempValues[index].option_id = option.id;
+			setFormData({ ...formData, options: tempValues });
+		}
+
+	};
+	const handleOptionRequireSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		let index: number = parseInt(e.target.name.split(".")[1])
+
+		let value = e.target.value
+
+		
+		
+
+			const tempValues = JSON.parse(JSON.stringify(formData.options))
+
+			tempValues[index].id = "";
+			tempValues[index].is_required = value;
+			setFormData({ ...formData, options: tempValues });
+		
+
+	};
+	
 	const AddColor = (color_id: string, is_variation_specific = false) => {
 
 		const tempValues = [...formData.colors]
@@ -505,6 +576,32 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 		setFormData({ ...formData, colors: tempValues });
 
 	};
+	const deleteOption = (index: number) => {
+
+		const tempValues = [...formData.options]
+
+		// if(tempValues.length > 1){
+		// 	tempValues.pop()
+		// }
+		tempValues.splice(index, 1);
+
+		setFormData({ ...formData, options: tempValues });
+
+	};
+	
+	const AddOption = () => {
+		const tempValues = [...formData.options]
+			tempValues.push({
+				id: "",
+				option_id: "",
+				color_id:"",
+				is_required:"0"
+				
+			})
+
+			setFormData({ ...formData, options: tempValues });
+	};
+	
 	const handleVariationValueAdd = (index: number) => {
 
 
@@ -588,6 +685,15 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 			],
 	length_lower_limit:"",
 	length_upper_limit:"",
+	length_is_required:"0",
+	options: [
+		{
+			id: "",
+			option_id: "",
+			color_id:"",
+			is_required:"0"
+		}
+	],
 		});
 	};
 	const handleSubmit = (e: React.FormEvent) => {
@@ -617,13 +723,19 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 			}
 
 		}
+		if (formData.options.length <= 1) {
+			if (!formData.options[0].option_id) {
+				console.log(formData.options[0])
+				tempFormData.options = []
 
-		const tempOptions = options.filter((el:any) => {
-			return el.selected === true
-		})
+			}
+
+		}
+
+		
 
 		apiClient()
-			.post(`${BACKENDAPI}/v1.0/products`, { ...tempFormData,options:tempOptions },
+			.post(`${BACKENDAPI}/v1.0/products`, { ...tempFormData },
 		)
 			.then((response) => {
 				console.log(response);
@@ -643,32 +755,16 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 			.get(`${BACKENDAPI}/v1.0/products/${id}`)
 			.then((response: any) => {
 				console.log(response);
-				const { id, name, category_id, style_id, sku, description, type, product_variations, variations, image, colors, status, is_featured,options:productOptions
+				const { id, name, category_id, style_id, sku, description, type, product_variations, variations, image, colors, status, is_featured,options
 					,
 					length_lower_limit,
 					length_upper_limit,
+					length_is_required
 				
 				
 				} = response.data.product
 
 				
-			apiClient()
-			.get(`${BACKENDAPI}/v1.0/options/all`)
-			.then((response: any) => {
-				console.log(response);
-				const tempData = response.data.data.map((el:any) => {
-				productOptions.map((el2:any) => {
-                     if(el2.option_id == el.id) {
-						el.selected = true
-					 }
-				})
-              return el;
-				})
-				setOptions(tempData);
-			})
-			.catch((error) => {
-				console.log(error.response);
-			});
 		
 
 
@@ -705,7 +801,13 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 					return el;
 				})
 
-
+                let tempOptions = options.map((el: any) => {
+					el.id = el.id
+					el.color_id = el.color_id
+					el.option_id = el.option_id
+					el.is_required = el.is_required
+					return el;
+				})
 				setFormData({
 					...formData,
 					id,
@@ -723,7 +825,9 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 					status,
 					is_featured,
 					length_lower_limit,
-					length_upper_limit
+					length_upper_limit,
+					options:tempOptions,
+					length_is_required
 				})
 				// setCategories(response.data.data);
 			})
@@ -742,12 +846,10 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 		}
 	}, []);
 	const updateData = () => {
-		const tempOptions = options.filter((el:any) => {
-			return el.selected === true
-		})
+	
 
 		apiClient()
-			.put(`${BACKENDAPI}/v1.0/products`, { ...formData,options:tempOptions })
+			.put(`${BACKENDAPI}/v1.0/products`, { ...formData })
 			.then((response: any) => {
 				console.log(response);
 				toast.success("Data Updated");
@@ -1543,41 +1645,170 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 				</div>
 			</div>
 			{/* end of colors */}
-
-			<div className="row mt-5">
-				<h3 className="text-center">
-				Options
-				</h3>
-				{
-					options.length?(
-						options.map((el:any) => {
-							return (<div className="col-md-3" key={el.id}>
-									<div className="form-check">
-											<input
-												className="form-check-input"
-												name="option"
-												type={"checkbox"} 
-												checked={el.selected}
-												id={`option-${el.id}`}
-												value={el.id}
-												 onChange={handleOptionChecked}
-											/>
-
-											<label
-												className="form-check-label"
-												htmlFor={`option-${el.id}`}>
-												{el.name}
-											</label>
-										</div>
-					
-                            
-							</div>)
-						})
-						
-					):(null)
-				}
-                 
+{/* @@@@@@@@@@@@@@@@@@@@@@ options @@@@@@@@@@@@@@@@ */}
+<div className="row mt-5">
+				<h4 className="text-center">
+					Options
+				</h4>
 			</div>
+<div className="row">
+				<div className="col-md-12 ">
+
+
+					<div className="row">
+						<div className="col-md-3">
+							Color
+						</div>
+
+						<div className="col-md-3">Option</div>
+						<div className="col-md-3">Require</div>
+						<div className="col-md-3">Action</div>
+
+
+					</div>
+
+
+					{
+						formData.options.map((el, index) => {
+							
+							return (
+								<div className="row mt-4 mb-4" key={index}>
+									{/* colors */}
+									<div className="col-md-3">
+										<select
+											className={
+												errors
+													? errors[`options.${index}.color_id`]
+														? `form-control is-invalid`
+														: `form-control is-valid`
+													: "form-control"
+											}
+											id={`options.${index}.color_id`}
+											name={`options.${index}.color_id`}
+											onChange={handleOptionColorSelect}
+
+											value={formData.options[index].color_id}>
+											<option value="">Please Select</option>
+											{colors.map((el: any, index:any) => (
+												<option
+													key={index}
+													value={el.id}
+													style={{ textTransform: "uppercase" }}>
+													{el.name}
+												</option>
+											))}
+										</select>
+										{errors && (
+											<>
+												{
+													errors[`options.${index}.color_id`] ? (<div className="invalid-feedback">This field is required</div>) : (<div className="valid-feedback">Looks good!</div>)
+
+												}
+
+											</>
+
+										)}
+									</div>
+									<div className="col-md-3">
+										<select
+											className={
+												errors
+													? errors[`options.${index}.option_id`]
+														? `form-control is-invalid`
+														: `form-control is-valid`
+													: "form-control"
+											}
+											id={`options.${index}.option_id`}
+											name={`options.${index}.option_id`}
+											onChange={handleOptionSelect}
+
+											value={formData.options[index].option_id}>
+											<option value="">Please Select</option>
+											{options.map((el: any, index:any) => (
+												<option
+													key={index}
+													value={el.id}
+													style={{ textTransform: "uppercase" }}>
+													{el.name}
+												</option>
+											))}
+										</select>
+										{errors && (
+											<>
+												{
+													errors[`options.${index}.option_id`] ? (<div className="invalid-feedback">This field is required</div>) : (<div className="valid-feedback">Looks good!</div>)
+
+												}
+
+											</>
+
+										)}
+									</div>
+
+									<div className="col-md-3">
+										<select
+											className={
+												errors
+													? errors[`options.${index}.is_required`]
+														? `form-control is-invalid`
+														: `form-control is-valid`
+													: "form-control"
+											}
+											id={`options.${index}.is_required`}
+											name={`options.${index}.is_required`}
+											onChange={handleOptionRequireSelect}
+
+											value={formData.options[index].is_required}>
+											<option value="0">No</option>
+											<option value="1">Yes</option>
+										</select>
+										{errors && (
+											<>
+												{
+													errors[`options.${index}.is_required`] ? (<div className="invalid-feedback">This field is required</div>) : (<div className="valid-feedback">Looks good!</div>)
+
+												}
+
+											</>
+
+										)}
+									</div>
+	
+								
+									
+
+									
+									
+									<div className="col-md-3">
+
+										<button className="btn btn-danger " type="button" onClick={() => {
+											deleteOption(index)
+										}}>-</button>
+
+									</div>
+									<br />
+								</div>
+
+
+							)
+						})
+					}
+
+
+
+
+				</div>
+				<div className="row">
+					<div className="col-md-8 offset-2">
+						<div className="text-center">
+
+							<button className="btn btn-primary" type="button" onClick={AddOption}>+</button>
+
+						</div>
+					</div>
+				</div>
+			</div>
+	
 
 <div className="row">
 
@@ -1628,6 +1859,34 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 				)}
 				{errors && <div className="valid-feedback">Looks good!</div>}
 			</div>
+			<div className="col-md-4">
+				<label htmlFor="length_is_required" className="form-label">
+				required
+				</label>
+				<select
+					className={
+						errors
+							? errors.length_is_required
+								? `form-control is-invalid`
+								: `form-control is-valid`
+							: "form-control"
+					}
+					id="length_is_required"
+					name="length_is_required"
+					onChange={handleSelect}
+					value={formData.length_is_required}
+				
+				>
+
+                                        <option value="0">No</option>
+											<option value="1">Yes</option>
+				</select>
+				{errors?.length_is_required && (
+					<div className="invalid-feedback">{errors.length_is_required[0]}</div>
+				)}
+				{errors && <div className="valid-feedback">Looks good!</div>}
+			</div>
+		
 </div>
 
 
