@@ -406,6 +406,17 @@ const ListProductsPageComponent: React.FC = () => {
 													</Link>
 												</li>
 												<li>
+													<Link
+														// onClick={() => {
+														// 	setCurrentData(el);
+														// 	showModal(true);
+														// }}
+														className="dropdown-item"
+														to={`/admin/products/duplicate/${el.id}`}>
+														Duplicate
+													</Link>
+												</li>
+												<li>
 													<hr className="dropdown-divider" />
 												</li>
 												<li>

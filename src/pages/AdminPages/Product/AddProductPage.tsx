@@ -7,14 +7,16 @@ const AddProduct: React.FC = (props:any) => {
 		<AdminPageComponent>
 			<main id="main" className="main">
 				<div className="pagetitle">
-					<h1>	{props?.match.params.id?"Edit":"Add New"}  product</h1>
+					<h1>	{
+					props?.match.params.id?"Edit":props?.match.params.duplicateId?"duplicate":"Add"
+					}   product</h1>
 					<nav>
 						<ol className="breadcrumb">
 							<li className="breadcrumb-item">
 								<a href="index.html">Home</a>
 							</li>
 							<li className="breadcrumb-item">Products</li>
-							<li className="breadcrumb-item active">{props?.match.params.id?"Edit":"Add"}  Product</li>
+							<li className="breadcrumb-item active">	{props?.match.params.id?"Edit":props?.match.params.duplicateId?"duplicate":"Add"}   Product</li>
 						</ol>
 					</nav>
 				</div>
@@ -24,12 +26,14 @@ const AddProduct: React.FC = (props:any) => {
 						<div className="col-12">
 							<div className="card">
 								<div className="card-body">
-									<h5 className="card-title">{props?.match.params.id?"Edit":"Add"}  Product</h5>
+									<h5 className="card-title">{props?.match.params.id?"Edit":props?.match.params.duplicateId?"duplicate":"Add"}  Product</h5>
                               {
 								props?.match.params.id?(<AddProductForm value={{id:props?.match.params.id}}
+									type="update" />):
+
+
+									(props?.match.params.duplicateId?(<AddProductForm value={{id:props?.match.params.duplicateId}} type="duplicate"/>):(<AddProductForm type="create"/>))
 									
-		
-									type="update" />):(<AddProductForm type="create"/>)
 							  }
 									
 								</div>
