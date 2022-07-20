@@ -13,6 +13,7 @@ interface FormData {
   discount_amount: string;
   discount_type: string;
   is_active: string;
+  cproducts:[]
 }
 
 const AddCouponForm: React.FC<UpdateFormInterface> = (props) => {
@@ -24,6 +25,7 @@ const AddCouponForm: React.FC<UpdateFormInterface> = (props) => {
     discount_amount: "",
     discount_type: "fixed",
     is_active: "1",
+    cproducts:[]
   });
   interface Links {
     label: string | null;
@@ -34,7 +36,7 @@ const AddCouponForm: React.FC<UpdateFormInterface> = (props) => {
   const [errors, setErrors] = useState<any>(null);
   // ############################# products
   const [loading, setLoading] = useState(false);
-  const [perPage, setPerPage] = useState(2);
+  const [perPage, setPerPage] = useState(10);
   const [from, setFrom] = useState(null);
   const [to, setTo] = useState(null);
   const [total, setTotal] = useState(null);
@@ -348,6 +350,7 @@ const AddCouponForm: React.FC<UpdateFormInterface> = (props) => {
       discount_amount: "",
       discount_type: "fixed",
       is_active: "1",
+      cproducts:[]
     });
   };
   const handleSubmit = (e: React.FormEvent) => {
@@ -394,27 +397,85 @@ const AddCouponForm: React.FC<UpdateFormInterface> = (props) => {
   };
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   // edit data section
+
+  const [firstTimeDataUpdated,setFirstTimeDataUpdated] = useState(false)
   useEffect(() => {
-    if (props.type == "update") {
-		apiClient()
-		.get(`${BACKENDAPI}/v1.0/coupons/${props.value}`)
-		.then((response: any) => {
-		  console.log(response.data);
-		  setFormData(response.data.data);
-  
-		 
-		})
-		.catch((error) => {
-		  console.log(error);
-		  console.log(error.response);
-		
-		});
-     
+    if(data.length && !firstTimeDataUpdated){
+      if (props.type == "update") {
+        apiClient()
+        .get(`${BACKENDAPI}/v1.0/coupons/${props.value}`)
+        .then((response: any) => {
+          console.log("coupon",response.data.data);
+          setFormData({...response.data.data});
+          
+          // setSelectedData()
+    const tempSelectedProduct = JSON.parse(JSON.stringify(response.data.data.cproducts))
+    const finalSelectedProduct = tempSelectedProduct.map((el:any) => {
+    return {id:el.product_id}
+    })
+    
+    setSelectedData(finalSelectedProduct)
+          const tempData = data.map((el: any) => {
+            let selected = false;
+            if (finalSelectedProduct.length) {
+              finalSelectedProduct.map((el2: any) => {
+                if (el2.id === el.id) {
+                  selected = true;
+                }
+              });
+              console.log("found", selected);
+            }
+            if (selected) {
+              el.checked = true;
+            } else {
+              el.checked = false;
+            }
+    
+            el.qty = 0;
+            el.variations.map((el2: any) => {
+              el.qty += parseInt(el2.qty);
+            });
+            return el;
+          });
+          console.log("tempData",tempData)
+          setData(tempData);
+          setFirstTimeDataUpdated(true)
+        })
+        .catch((error) => {
+          console.log(error);
+          console.log(error.response);
+        
+        });
+         
+        }
     }
-  }, []);
+ 
+  }, [data.length]);
+
+  // useEffect(() => {
+  //   if (props.type == "update") {
+
+
+  //   }
+  // }, [formData.cproducts]);
+
   const updateData = () => {
+    const finalSelectedProducts = {
+      products: [
+        ...getSelectedData().map((el: any) => {
+          return {
+            id: el.id,
+          };
+        }),
+        ...selectedData.map((el: any) => {
+          return {
+            id: el.id,
+          };
+        }),
+      ],
+    };
     apiClient()
-      .put(`${BACKENDAPI}/v1.0/coupons`, { ...formData })
+      .put(`${BACKENDAPI}/v1.0/coupons`, { ...formData,...finalSelectedProducts })
       .then((response: any) => {
         console.log(response);
         toast.success("Data Updated");
