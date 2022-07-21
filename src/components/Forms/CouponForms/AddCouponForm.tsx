@@ -400,12 +400,13 @@ const AddCouponForm: React.FC<UpdateFormInterface> = (props) => {
 
   const [firstTimeDataUpdated,setFirstTimeDataUpdated] = useState(false)
   useEffect(() => {
-    if(data.length && !firstTimeDataUpdated){
+    if( !firstTimeDataUpdated){
       if (props.type == "update") {
         apiClient()
         .get(`${BACKENDAPI}/v1.0/coupons/${props.value}`)
         .then((response: any) => {
           console.log("coupon",response.data.data);
+
           setFormData({...response.data.data});
           
           // setSelectedData()
@@ -449,8 +450,8 @@ const AddCouponForm: React.FC<UpdateFormInterface> = (props) => {
          
         }
     }
- 
-  }, [data.length]);
+
+  }, [formData.cproducts.length]);
 
   // useEffect(() => {
   //   if (props.type == "update") {
