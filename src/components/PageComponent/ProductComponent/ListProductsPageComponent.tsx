@@ -304,19 +304,96 @@ const ListProductsPageComponent: React.FC = () => {
 		
 	}
 	
-	if (!data?.length) {
+	// if (!data?.length) {
 
-		return <div className="noProduct d-flex align-items-center justify-content-center">
-			{
-				loading ? "loading..." : <h3 className="display-3" >
-					No products to show
-				</h3>
-			}
+	// 	return <div className="noProduct d-flex align-items-center justify-content-center">
+	// 		{
+	// 			loading ? "loading..." : <h3 className="display-3" >
+	// 				No products to show
+	// 			</h3>
+	// 		}
 
-		</div>
+	// 	</div>
+	// }
+	const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if(e.target.value) {
+			setLoading(true)
+			apiClient()
+				.get(`${BACKENDAPI}/v1.0/products/search/${e.target.value}`)
+				.then((response: any) => {
+					setLoading(false)
+					console.log(response.data)
+					setFrom(response.data.products.from)
+					setTo(response.data.products.to)
+					setTotal(response.data.products.total)
+	
+					setLastPage(response.data.products.last_page)
+	
+					setLinks(response.data.products.links)
+					set_current_page(response.data.products.current_page)
+					console.log(response.data.products);
+					const tempData = response.data.products.data.map((el:any) => {
+			 el.checked = false;
+			 el.qty = 0;
+			 el.variations.map((el2:any) => {
+				el.qty += parseInt(el2.qty) 
+			 })
+			 return el;
+					})
+					setData(tempData);
+	
+					setNextPageLink(response.data.products.next_page_url);
+					setPrevPageLink(response.data.products.prev_page_url);
+				})
+				.catch((error) => {
+					setLoading(false)
+					console.log(error);
+				});
+		} else {
+			setLoading(true)
+		apiClient()
+			.get(`${BACKENDAPI}/v1.0/products/pagination/${perPage}?page=${current_page}`)
+			.then((response: any) => {
+				setLoading(false)
+				console.log(response.data)
+				setFrom(response.data.products.from)
+				setTo(response.data.products.to)
+				setTotal(response.data.products.total)
+
+				setLastPage(response.data.products.last_page)
+
+				setLinks(response.data.products.links)
+				set_current_page(response.data.products.current_page)
+				console.log(response.data.products);
+				const tempData = response.data.products.data.map((el:any) => {
+         el.checked = false;
+		 el.qty = 0;
+		 el.variations.map((el2:any) => {
+			el.qty += parseInt(el2.qty) 
+		 })
+         return el;
+				})
+				setData(tempData);
+
+				setNextPageLink(response.data.products.next_page_url);
+				setPrevPageLink(response.data.products.prev_page_url);
+			})
+			.catch((error) => {
+				setLoading(false)
+				console.log(error.response);
+			});
+		}
+	
 	}
 	return (
 		<>
+		<div className="row">
+			<div className="col-6 offset-3">
+
+			<input type="text" className="form-control" onChange={handleSearch}/>
+			</div>
+	
+		</div>
 			<table className="table">
 				<thead>
 					<tr>
