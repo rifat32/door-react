@@ -8,6 +8,7 @@
 /*--------------------------------------------------------------
 # General
 --------------------------------------------------------------*/
+@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
 .trhover{
 cursor: pointer;
 }
@@ -1089,4 +1090,18 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
   font-size: 13px;
   color: #012970;
+}
+.p-bg{
+  background-color:#c6b478;
+  font-family: 'Nunito', sans-serif;
+  color:white;
+}
+.nunito-font{
+  font-family: 'Nunito', sans-serif;
+}
+.font-20{
+  font-size:"20px";
+}
+.color-white{
+  color:white;
 }
