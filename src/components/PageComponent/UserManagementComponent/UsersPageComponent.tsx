@@ -2,9 +2,21 @@ import React, { useState, useEffect } from "react";
 import { BACKENDAPI } from "../../../config";
 import { apiClient } from "../../../utils/apiClient";
 import { toast } from "react-toastify";
+import CustomModal from "../../Modal/Modal";
+import AddPatientForm from "../../Forms/PatientForms/AddPatientForm";
+import AddUserForm from "../../Forms/UserManagementForms/AddUserForm";
 
 const UsersPageComponent: React.FC = () => {
 	const [data, setData] = useState<any>([]);
+
+	const [modalIsOpen, setIsOpen] = React.useState(false);
+	const showModal = (show: boolean) => {
+		setIsOpen(show);
+	};
+	const [currentData, setCurrentData] = useState<any>(null);
+
+
+
 
 	const [link, setLink] = useState(`${BACKENDAPI}/v1.0/users`);
 	const [nextPageLink, setNextPageLink] = useState("");
@@ -43,6 +55,15 @@ const UsersPageComponent: React.FC = () => {
 					console.log(error.response);
 				});
 		}
+	};
+	const updateDataStates = (updatedData: any) => {
+		const tempDatas = data.map((el: any) => {
+			if (parseInt(el.id) === parseInt(updatedData.id)) {
+				return updatedData;
+			}
+			return el;
+		});
+		setData(tempDatas);
 	};
 	const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
 		if(e.target.value) {
@@ -91,7 +112,8 @@ const UsersPageComponent: React.FC = () => {
 				<thead>
 					<tr>
 						<th scope="col">Id</th>
-						<th scope="col">Name</th>
+						<th scope="col">First Name</th>
+						<th scope="col">Last Name</th>
 						<th scope="col">email</th>
 						<th scope="col">roles</th>
 						<th scope="col">discount</th>
@@ -103,7 +125,8 @@ const UsersPageComponent: React.FC = () => {
 							return (
 								<tr key={el.id}>
 									<td>{el.id}</td>
-									<td>{el.name}</td>
+									<td>{el.first_name}</td>
+									<td>{el.last_name}</td>
 									<td>{el.email}</td>
 									{el.roles.length ? (
 										<td>
@@ -126,6 +149,17 @@ const UsersPageComponent: React.FC = () => {
 												Action
 											</button>
 											<ul className="dropdown-menu action">
+											<li>
+													<a
+														onClick={() => {
+															setCurrentData(el);
+															showModal(true);
+														}}
+														className="dropdown-item"
+														href="#">
+														edit
+													</a>
+												</li>
 												<li>
 													<hr className="dropdown-divider" />
 												</li>
@@ -170,6 +204,17 @@ const UsersPageComponent: React.FC = () => {
 					"No data to show"
 				)}
 			</div>
+			<CustomModal
+				isOpen={modalIsOpen}
+				showModal={showModal}
+				type="Update Bank">
+				<AddUserForm
+					value={currentData}
+					updateDataStates={updateDataStates}
+					showModal={showModal}
+					type="update"
+				/>
+			</CustomModal>
 		</>
 	);
 };

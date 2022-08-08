@@ -7,7 +7,8 @@ import { toast } from "react-toastify";
 import { AppContext } from "../../context";
 
 interface RegisterInfo {
-	name: "";
+	first_name: string;
+	last_name: string;
 	email: string;
 	password: string;
 	password_confirmation: string;
@@ -17,7 +18,8 @@ const RegisterForm: React.FC = (props: any) => {
 		useContext(AppContext);
 
 	const [state, setState] = useState<RegisterInfo>({
-		name: "",
+		first_name: "",
+		last_name: "",
 		email: "",
 		password: "",
 		password_confirmation: "",
@@ -65,15 +67,15 @@ const RegisterForm: React.FC = (props: any) => {
 		<>
 			<form className="row g-3" noValidate onSubmit={handleSubmit}>
 				<div className="col-12">
-					<label htmlFor="yourPassword" className="form-label">
-						Name
+					<label htmlFor="first_name" className="form-label">
+					First Name
 					</label>
 					<input
 						type="text"
-						name="name"
+						name="first_name"
 						className={
 							errors
-								? errors.name
+								? errors.first_name
 									? `form-control is-invalid`
 									: `form-control is-valid`
 								: "form-control"
@@ -81,10 +83,34 @@ const RegisterForm: React.FC = (props: any) => {
 						id="yourPassword"
 						required
 						onChange={handleChange}
-						value={state.name}
+						value={state.first_name}
 					/>
-					{errors?.name && (
-						<div className="invalid-feedback">{errors.name[0]}</div>
+					{errors?.first_name && (
+						<div className="invalid-feedback">{errors.first_name[0]}</div>
+					)}
+					{errors && <div className="valid-feedback">Looks good!</div>}
+				</div>
+				<div className="col-12">
+					<label htmlFor="last_name" className="form-label">
+					Last Name
+					</label>
+					<input
+						type="text"
+						name="last_name"
+						className={
+							errors
+								? errors.last_name
+									? `form-control is-invalid`
+									: `form-control is-valid`
+								: "form-control"
+						}
+						id="yourPassword"
+						required
+						onChange={handleChange}
+						value={state.last_name}
+					/>
+					{errors?.last_name && (
+						<div className="invalid-feedback">{errors.last_name[0]}</div>
 					)}
 					{errors && <div className="valid-feedback">Looks good!</div>}
 				</div>

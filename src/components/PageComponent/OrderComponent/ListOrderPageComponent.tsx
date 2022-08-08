@@ -123,7 +123,7 @@ const ListOrderPageComponent: React.FC = (props: any) => {
             <th scope="col">Email</th>
             <th scope="col">Order Date</th>
             <th scope="col">Status</th>
-            <th scope="col">Action</th>
+            {/* <th scope="col">Action</th> */}
           </tr>
         </thead>
         {data.length ? (
@@ -141,7 +141,7 @@ const ListOrderPageComponent: React.FC = (props: any) => {
                   <td>{el.fname && el.email}</td>
                   <td>{el.fname && new Date(el.created_at).toDateString()}</td>
                   <td>{el.status}</td>
-                  <td>
+                  {/* <td>
                     <div className="btn-group">
                       <button
                         type="button"
@@ -183,7 +183,7 @@ const ListOrderPageComponent: React.FC = (props: any) => {
                         </li>
                       </ul>
                     </div>
-                  </td>
+                  </td> */}
                 </tr>
               );
             })}

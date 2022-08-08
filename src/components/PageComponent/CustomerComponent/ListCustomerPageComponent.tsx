@@ -123,8 +123,9 @@ const ListCutomerPageComponent: React.FC = (props:any) => {
 						<th scope="col">Id</th>
 						<th scope="col">Name</th>
 						<th scope="col">Email</th>
+						<th scope="col">Type</th>
 						<th scope="col">Total Order</th>
-						<th scope="col">Action</th>
+						{/* <th scope="col">Action</th> */}
 					</tr>
 				</thead>
 				{data.length ? (
@@ -141,8 +142,9 @@ const ListCutomerPageComponent: React.FC = (props:any) => {
 									<td>{el.id}</td>
 									<td>{el.fname && el.fname} {el.lname && el.lname}</td>
 									<td>{el.email && el.email}</td>
+									<td>{el.type && el.type}</td>
 									<td>{el.total_order && el.total_order}</td>
-									<td>
+									{/* <td>
 										<div className="btn-group">
 											<button
 												type="button"
@@ -181,7 +183,7 @@ const ListCutomerPageComponent: React.FC = (props:any) => {
 												</li>
 											</ul>
 										</div>
-									</td>
+									</td> */}
 								</tr>
 							);
 						})}

@@ -275,6 +275,7 @@ const OrderViewPage: React.FC = (props: any) => {
 					name="status"
 					onChange={handleSelect}
 					value={order.status}>
+          <option value="Pending">Pending Payment</option>
 					<option value="Pending Payment">Pending Payment</option>
           <option value="Processing">Processing</option>
           <option value="On Hold">On Hold</option>
