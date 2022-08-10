@@ -89,7 +89,7 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
 	length_is_required:"0",
 	options:[
 		{
-			id: "",
+		    id: "",
 			option_id: "",
 			color_id: "",
 			is_required:"0",

@@ -122,9 +122,12 @@ const OrderViewPage: React.FC = (props: any) => {
                         </div>
                         <div className="m-2">
                           {" "}
-                          <span className=" position-absolute  p-2 bg-warning border border-light rounded-circle mt-1"></span>
+                          
                           <span className="badge bg-light text-dark ps-4 ">
-                            Unpaid
+                            {
+                              order.payment?"paid":"unpaid"
+                            }
+                            
                           </span>
                         </div>
 
