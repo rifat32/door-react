@@ -25,6 +25,7 @@ interface FormData {
   length_upper_limit: string;
   length_is_required: string;
   options: Options[];
+  panels:string
 }
 interface Variation {
   id: String;
@@ -46,6 +47,17 @@ interface Options {
   color_id: string;
   is_required: string;
 }
+// interface Panels {
+//   id: string;
+//   thickness: string;
+//   length: string;
+//   len_minimum: string;
+//   len_maximum: string;
+//   depth: string;
+//   depth_minimum: string;
+//   depth_maximum: string;
+//   price: string;
+// }
 const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
   const [formData, setFormData] = useState<FormData>({
     id: "",
@@ -91,6 +103,15 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
         is_required: "0",
       },
     ],
+     panels: JSON.stringify([{id: "",
+     thickness: 1,
+     length: "1",
+     len_minimum: "",
+     len_maximum: "",
+     depth: "1",
+     depth_minimum: "",
+     depth_maximum: "",
+     price: "0"}])
   });
   const [imageFile, setImageFile] = useState<any>();
   const [categories, setCategories] = useState([]);
@@ -106,8 +127,13 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
       value: "single",
     },
     {
-      id: 1,
+      id: 2,
       value: "variable",
+    },
+    ,
+    {
+      id: 3,
+      value: "panel",
     },
   ]);
   const [errors, setErrors] = useState<any>(null);
@@ -456,6 +482,40 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
       setFormData({ ...formData, colors: tempValues });
     }
   };
+  const handlePanelSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    let index: number = parseInt(e.target.name.split(".")[1]);
+    let name: string = (e.target.name.split(".")[2]);
+
+    let value = e.target.value;
+
+    if (value) {
+   
+
+      const tempValues = JSON.parse(formData.panels);
+
+      tempValues[index].id = "";
+      tempValues[index][name] = value;
+     
+      setFormData({ ...formData, panels: JSON.stringify(tempValues) });
+    }
+  };
+  const handlePanelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let index: number = parseInt(e.target.name.split(".")[1]);
+    let name: string = (e.target.name.split(".")[2]);
+
+    let value = e.target.value;
+
+   
+
+      const tempValues = JSON.parse(formData.panels);
+
+      tempValues[index].id = "";
+      tempValues[index][name] = value;
+     
+      setFormData({ ...formData, panels: JSON.stringify(tempValues) });
+    
+  };
+  
   const handleOptionColorSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     let index: number = parseInt(e.target.name.split(".")[1]);
 
@@ -525,6 +585,25 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
       setFormData({ ...formData, colors: tempValues });
     }
   };
+  const AddPanel = () => {
+    const tempValues = JSON.parse(formData.panels);
+  
+    
+   
+      tempValues.push({id: "",
+      thickness: 1,
+      length: "1",
+      len_minimum: "",
+      len_maximum: "",
+      depth: "1",
+      depth_minimum: "",
+      depth_maximum: "",
+      price: "0"
+    });
+
+      setFormData({ ...formData, panels: JSON.stringify(tempValues) });
+    
+  };
   const deleteColor = (index: number) => {
     const tempValues = [...formData.colors];
 
@@ -534,6 +613,16 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
     tempValues.splice(index, 1);
 
     setFormData({ ...formData, colors: tempValues });
+  };
+  const deletePanel = (index: number) => {
+    const tempValues = JSON.parse(formData.panels);
+
+    // if(tempValues.length > 1){
+    // 	tempValues.pop()
+    // }
+    tempValues.splice(index, 1);
+
+    setFormData({ ...formData, panels: JSON.stringify(tempValues) });
   };
   const deleteOption = (index: number) => {
     const tempValues = [...formData.options];
@@ -634,6 +723,15 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
           is_required: "0",
         },
       ],
+     panels: JSON.stringify([{id: "",
+     thickness: 1,
+     length: "1",
+     len_minimum: "",
+     len_maximum: "",
+     depth: "1",
+     depth_minimum: "",
+     depth_maximum: "",
+     price: "0"}])
     });
   };
   const handleSubmit = (e: React.FormEvent) => {
@@ -796,7 +894,14 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
   };
   // end edit Data section
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
+  const thickness = [
+    {id:1,
+    name:"18"
+    },
+    {id:2,
+      name:"25"
+      }
+  ]
   return (
     <form className="row g-3" onSubmit={handleSubmit}>
       <div className="col-md-4">
@@ -1073,7 +1178,7 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
         )}
         {errors && <div className="valid-feedback">Looks good!</div>}
       </div>
-      {formData.type === "single" ? (
+      {(formData.type === "single"||formData.type === "panel") ? (
         <div className="col-md-4">
           <label htmlFor="price" className="form-label">
             Price
@@ -1098,7 +1203,7 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
           {errors && <div className="valid-feedback">Looks good!</div>}
         </div>
       ) : null}
-      {formData.type === "single" ? (
+      {(formData.type === "single"||formData.type === "panel") ? (
         <div className="col-md-4">
           <label htmlFor="qty" className="form-label">
             Quantity
@@ -1123,6 +1228,339 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
           {errors && <div className="valid-feedback">Looks good!</div>}
         </div>
       ) : null}
+  
+      {
+        formData.type == "panel"?(<>
+          <div className="row mt-5">
+        <h4 className="text-center"> Panels</h4>
+      </div>
+        
+      <div className="row">
+        <div className="col-md-12 ">
+          {/* <div className="row">
+            <div className="col-md-3">Thiskness</div>
+
+            <div className="col-md-3">Code</div>
+            <div className="col-md-3">Image</div>
+            <div className="col-md-3">Action</div>
+          </div> */}
+
+          {JSON.parse(formData.panels).map((el:any, index:any) => {
+      
+            return (
+              <div className="row mt-4 mb-4" key={index}>
+              
+                <div className="col-md-2">
+                  <label htmlFor={`panels.${index}.thickness`}>thickness</label>
+                  <select
+                    className={
+                      errors
+                        ? errors[`panels.${index}.thickness`]
+                          ? `form-control is-invalid`
+                          : `form-control is-valid`
+                        : "form-control"
+                    }
+                    id={`panels.${index}.thickness`}
+                    name={`panels.${index}.thickness`}
+                    onChange={handlePanelSelect}
+                    value={el.thickness}
+                  >
+                    <option value="">Please Select</option>
+                    {thickness.map((el: any, index) => (
+                      <option
+                        key={index}
+                        value={el.id}
+                        style={{ textTransform: "uppercase" }}
+                      >
+                        {el.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors && (
+                    <>
+                      {errors[`panels.${index}.thickness`] ? (
+                        <div className="invalid-feedback">
+                          This field is required
+                        </div>
+                      ) : (
+                        <div className="valid-feedback">Looks good!</div>
+                      )}
+                    </>
+                  )}
+                </div>
+
+          
+           
+                <div className="col-md-1">
+                  <label htmlFor={`panels.${index}.length`}>Length</label>
+                  <input
+                    type="text"
+                    className={
+                      errors
+                        ? errors[`panels.${index}.length`]
+                          ? `form-control is-invalid`
+                          : `form-control is-valid`
+                        : "form-control"
+                    }
+                    id={`panels.${index}.length`}
+                    name={`panels.${index}.length`}
+                    
+                    onChange={handlePanelChange}
+                    value={el.length}
+                    readOnly
+                  />
+
+                  {errors && (
+                    <>
+                      {errors[`panels.${index}.length`] ? (
+                        <div className="invalid-feedback">
+                          This field is required
+                        </div>
+                      ) : (
+                        <div className="valid-feedback">Looks good!</div>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                <div className="col-md-2">
+                  <label htmlFor={`panels.${index}.len_minimum`}>Minimum</label>
+                  <input
+                    type="text"
+                    className={
+                      errors
+                        ? errors[`panels.${index}.len_minimum`]
+                          ? `form-control is-invalid`
+                          : `form-control is-valid`
+                        : "form-control"
+                    }
+                    id={`panels.${index}.len_minimum`}
+                    name={`panels.${index}.len_minimum`}
+                    
+                    onChange={handlePanelChange}
+                    value={el.len_minimum}
+                    
+                  />
+
+                  {errors && (
+                    <>
+                      {errors[`panels.${index}.len_minimum`] ? (
+                        <div className="invalid-feedback">
+                          This field is required
+                        </div>
+                      ) : (
+                        <div className="valid-feedback">Looks good!</div>
+                      )}
+                    </>
+                  )}
+                </div>
+                <div className="col-md-2">
+                  <label htmlFor={`panels.${index}.len_maximum`}>Maximum</label>
+                  <input
+                    type="text"
+                    className={
+                      errors
+                        ? errors[`panels.${index}.len_maximum`]
+                          ? `form-control is-invalid`
+                          : `form-control is-valid`
+                        : "form-control"
+                    }
+                    id={`panels.${index}.len_maximum`}
+                    name={`panels.${index}.len_maximum`}
+                    
+                    onChange={handlePanelChange}
+                    value={el.len_maximum}
+                    
+                  />
+
+                  {errors && (
+                    <>
+                      {errors[`panels.${index}.len_maximum`] ? (
+                        <div className="invalid-feedback">
+                          This field is required
+                        </div>
+                      ) : (
+                        <div className="valid-feedback">Looks good!</div>
+                      )}
+                    </>
+                  )}
+                </div>
+                 <div className="col-md-5">
+
+                </div> 
+                <div className="offset-md-2 col-md-1">
+                  <label htmlFor={`panels.${index}.depth`}>Depth</label>
+                  <input
+                    type="text"
+                    className={
+                      errors
+                        ? errors[`panels.${index}.depth`]
+                          ? `form-control is-invalid`
+                          : `form-control is-valid`
+                        : "form-control"
+                    }
+                    id={`panels.${index}.depth`}
+                    name={`panels.${index}.depth`}
+                    
+                    onChange={handlePanelChange}
+                    value={el.depth}
+                    readOnly
+                  />
+
+                  {errors && (
+                    <>
+                      {errors[`panels.${index}.depth`] ? (
+                        <div className="invalid-feedback">
+                          This field is required
+                        </div>
+                      ) : (
+                        <div className="valid-feedback">Looks good!</div>
+                      )}
+                    </>
+                  )}
+                </div>
+                <div className="col-md-2">
+                  <label htmlFor={`panels.${index}.depth_minimum`}>Minimum</label>
+                  <input
+                    type="text"
+                    className={
+                      errors
+                        ? errors[`panels.${index}.depth_minimum`]
+                          ? `form-control is-invalid`
+                          : `form-control is-valid`
+                        : "form-control"
+                    }
+                    id={`panels.${index}.depth_minimum`}
+                    name={`panels.${index}.depth_minimum`}
+                    
+                    onChange={handlePanelChange}
+                    value={el.depth_minimum}
+                    
+                  />
+
+                  {errors && (
+                    <>
+                      {errors[`panels.${index}.depth_minimum`] ? (
+                        <div className="invalid-feedback">
+                          This field is required
+                        </div>
+                      ) : (
+                        <div className="valid-feedback">Looks good!</div>
+                      )}
+                    </>
+                  )}
+                </div>
+                <div className="col-md-2">
+                  <label htmlFor={`panels.${index}.depth_maximum`}>Maximum</label>
+                  <input
+                    type="text"
+                    className={
+                      errors
+                        ? errors[`panels.${index}.depth_maximum`]
+                          ? `form-control is-invalid`
+                          : `form-control is-valid`
+                        : "form-control"
+                    }
+                    id={`panels.${index}.depth_maximum`}
+                    name={`panels.${index}.depth_maximum`}
+                    
+                    onChange={handlePanelChange}
+                    value={el.depth_maximum}
+                    
+                  />
+
+                  {errors && (
+                    <>
+                      {errors[`panels.${index}.depth_maximum`] ? (
+                        <div className="invalid-feedback">
+                          This field is required
+                        </div>
+                      ) : (
+                        <div className="valid-feedback">Looks good!</div>
+                      )}
+                    </>
+                  )}
+                </div>
+                <div className="col-md-2">
+                  <label htmlFor={`panels.${index}.price`}>price</label>
+                  <input
+                    type="text"
+                    className={
+                      errors
+                        ? errors[`panels.${index}.price`]
+                          ? `form-control is-invalid`
+                          : `form-control is-valid`
+                        : "form-control"
+                    }
+                    id={`panels.${index}.price`}
+                    name={`panels.${index}.price`}
+                    
+                    onChange={handlePanelChange}
+                    value={el.price}
+                    
+                  />
+
+                  {errors && (
+                    <>
+                      {errors[`panels.${index}.price`] ? (
+                        <div className="invalid-feedback">
+                          This field is required
+                        </div>
+                      ) : (
+                        <div className="valid-feedback">Looks good!</div>
+                      )}
+                    </>
+                  )}
+                </div>
+       
+
+               
+            
+                <div className="col-md-3 mt-4">
+                  
+                  <button
+                    className="btn btn-danger "
+                    type="button"
+                    onClick={() => {
+                      deletePanel(index);
+                    }}
+                  >
+                    -
+                  </button>
+                </div>
+                <br />
+              </div>
+            );
+          })}
+        </div>
+        <div className="row">
+          <div className="col-md-8 offset-2">
+            <div className="text-center">
+              <button
+                className="btn btn-primary"
+                type="button"
+                onClick={ AddPanel}
+              >
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+        
+        </>):(null)
+      }
+     
+
+    
+
+
+
+
+
+
+
+      {/* variation */}
       {formData.type === "variable" ? (
         <div className="col-lg-12 ">
           {/* head */}
