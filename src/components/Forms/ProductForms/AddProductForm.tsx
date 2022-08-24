@@ -104,7 +104,7 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
       },
     ],
      panels: JSON.stringify([{id: "",
-     thickness: 1,
+     thickness: "",
      length: "1",
      len_minimum: "",
      len_maximum: "",
@@ -591,7 +591,7 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
     
    
       tempValues.push({id: "",
-      thickness: 1,
+      thickness: "",
       length: "1",
       len_minimum: "",
       len_maximum: "",
@@ -724,7 +724,7 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
         },
       ],
      panels: JSON.stringify([{id: "",
-     thickness: 1,
+     thickness: "",
      length: "1",
      len_minimum: "",
      len_maximum: "",
@@ -896,10 +896,11 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
   // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
   const thickness = [
     {id:1,
-    name:"18"
+    value:"18"
     },
     {id:2,
-      name:"25"
+     
+    value:"25"
       }
   ]
   return (
@@ -1269,10 +1270,10 @@ const AddProductForm: React.FC<UpdateFormInterface> = (props) => {
                     {thickness.map((el: any, index) => (
                       <option
                         key={index}
-                        value={el.id}
+                        value={el.value}
                         style={{ textTransform: "uppercase" }}
                       >
-                        {el.name}
+                        {el.value}
                       </option>
                     ))}
                   </select>
