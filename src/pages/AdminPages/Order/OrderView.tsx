@@ -187,20 +187,21 @@ const OrderViewPage: React.FC = (props: any) => {
                                               {" "}
                                               Panel Thickness:{" "}
                                               {el.selected_panel_thickness}
+                                              {" MM"}
                                             </p>
                                           )}
                                           {el.selected_panel_depth && (
                                             <p className="m-0 p-0">
                                               {" "}
                                               Panel Depth:{" "}
-                                              {el.selected_panel_depth}
+                                              {el.selected_panel_depth} {" MM"}
                                             </p>
                                           )}
                                           {el.selected_panel_length && (
                                             <p className="m-0 p-0">
                                               {" "}
                                               Panel Length:{" "}
-                                              {el.selected_panel_length}
+                                              {el.selected_panel_length} {" MM"}
                                             </p>
                                           )}
                                           {el.product_variation && (
