@@ -6,7 +6,7 @@ import ListCouponPageComponent from "../../../components/PageComponent/CouponCom
 import ListOrderPageComponent from "../../../components/PageComponent/OrderComponent/ListOrderPageComponent";
 
 import ListCategoryPageComponent from "../../../components/PageComponent/ProductComponent/ListCategoryPageComponent";
-import { BACKEND, BACKENDAPI } from "../../../config";
+import { BACKEND, BACKENDAPI, CURRENCY } from "../../../config";
 import { ROUTE_LIST } from "../../../RoutConstants";
 import { apiClient } from "../../../utils/apiClient";
 
@@ -281,9 +281,14 @@ const OrderViewPage: React.FC = (props: any) => {
                                         </div>
                                         <div className="col-4">
                                           <small className="me-1">
-                                            ${el.price} x {el.qty}
+                                            {CURRENCY}
+                                            {el.price} x {el.qty}
                                           </small>{" "}
-                                          <small> ${el.price * el.qty} </small>
+                                          <small>
+                                            {" "}
+                                            {CURRENCY}
+                                            {el.price * el.qty}{" "}
+                                          </small>
                                         </div>
                                       </div>
                                     </div>
@@ -335,7 +340,11 @@ const OrderViewPage: React.FC = (props: any) => {
                                   <small>{orderInfo.totalQuantity} item</small>
                                 </div>
                                 <div className="col-4 text-center ">
-                                  <small> ${orderInfo.subTotal}</small>
+                                  <small>
+                                    {" "}
+                                    {CURRENCY}
+                                    {orderInfo.subTotal}
+                                  </small>
                                 </div>
                               </div>
                               <div className="row justify-content-between">
@@ -346,7 +355,10 @@ const OrderViewPage: React.FC = (props: any) => {
                                   <small> Standard</small>
                                 </div>
                                 <div className="col-4 text-center ">
-                                  <small>${orderInfo.shipping}</small>
+                                  <small>
+                                    {CURRENCY}
+                                    {orderInfo.shipping}
+                                  </small>
                                 </div>
                               </div>
 
@@ -358,7 +370,10 @@ const OrderViewPage: React.FC = (props: any) => {
                                   <small>GB Vat 20% included</small>
                                 </div>
                                 <div className="col-4 text-center ">
-                                  <small>${orderInfo.tax}</small>
+                                  <small>
+                                    {CURRENCY}
+                                    {orderInfo.tax}
+                                  </small>
                                 </div>
                               </div>
                               {!orderInfo.coupon ? null : (
@@ -377,7 +392,10 @@ const OrderViewPage: React.FC = (props: any) => {
                                     </small>
                                   </div>
                                   <div className="col-4 text-center ">
-                                    <small>${orderInfo.coupon}</small>
+                                    <small>
+                                      {CURRENCY}
+                                      {orderInfo.coupon}
+                                    </small>
                                   </div>
                                 </div>
                               )}
@@ -389,7 +407,7 @@ const OrderViewPage: React.FC = (props: any) => {
 
                                 <div className="col-4 text-center ">
                                   <small>
-                                    $
+                                    {CURRENCY}
                                     {orderInfo.subTotal +
                                       orderInfo.tax +
                                       orderInfo.shipping -
@@ -405,7 +423,7 @@ const OrderViewPage: React.FC = (props: any) => {
                                 </div>
 
                                 <div className="col-4 text-center ">
-                                  $
+                                  {CURRENCY}
                                   {orderInfo.subTotal +
                                     orderInfo.tax +
                                     orderInfo.shipping}

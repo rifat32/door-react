@@ -5,3 +5,5 @@ export const APPNAME = "Doors";
 
 
 export const BACKENDAPI = `${BACKEND}/api`;
+export const CURRENCY="£";
+//€ £
