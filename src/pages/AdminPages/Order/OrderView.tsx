@@ -85,23 +85,22 @@ const OrderViewPage: React.FC = (props: any) => {
       name: "From Bottom",
     },
   ];
-  
+
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (window.confirm("Are you sure  want to change order status")) {
-		  apiClient()
-    .post(`${BACKENDAPI}/v1.0/orders/status/${props.match.params.id}`, {
-      status: e.target.value,
-    })
-    .then((response: any) => {
-      console.log(response);
-      window.location.reload();
-    })
-    .catch((error) => {
-      console.log(error.response);
-    });
-		}
-  
-	};
+      apiClient()
+        .post(`${BACKENDAPI}/v1.0/orders/status/${props.match.params.id}`, {
+          status: e.target.value,
+        })
+        .then((response: any) => {
+          console.log(response);
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.log(error.response);
+        });
+    }
+  };
   return (
     <AdminPageComponent>
       <main id="main" className="main">
@@ -116,24 +115,28 @@ const OrderViewPage: React.FC = (props: any) => {
                     <div className="">
                       <div className="d-flex flex-row border-bottom">
                         <div className=" m-2 ">
-                          <span className="badge bg-light text-dark">
+                          <span
+                            className="badge text-dark"
+                            style={{ backgroundColor: "#e5e5e5" }}
+                          >
                             #{order.id}
                           </span>
                         </div>
                         <div className="m-2">
                           {" "}
-                          
-                          <span className="badge bg-light text-dark ps-4 ">
-                            {
-                              order.payment?"paid":"unpaid"
-                            }
-                            
+                          <span
+                            className="badge text-dark "
+                            style={{ backgroundColor: "#e5e5e5" }}
+                          >
+                            {order.payment ? "paid" : "unpaid"}
                           </span>
                         </div>
 
                         <div className="m-2">
-                          <span className=" position-absolute  p-2 bg-warning border border-light rounded-circle mt-1"></span>
-                          <span className="badge bg-light text-dark ps-4 ">
+                          <span
+                            className="badge text-dark "
+                            style={{ backgroundColor: "#e5e5e5" }}
+                          >
                             {order.status}
                           </span>
                         </div>
@@ -177,6 +180,27 @@ const OrderViewPage: React.FC = (props: any) => {
                                             <p className="m-0 p-0">
                                               {" "}
                                               Colour: {el.color.name}
+                                            </p>
+                                          )}
+                                          {el.selected_panel_thickness && (
+                                            <p className="m-0 p-0">
+                                              {" "}
+                                              Panel Thickness:{" "}
+                                              {el.selected_panel_thickness}
+                                            </p>
+                                          )}
+                                          {el.selected_panel_depth && (
+                                            <p className="m-0 p-0">
+                                              {" "}
+                                              Panel Depth:{" "}
+                                              {el.selected_panel_depth}
+                                            </p>
+                                          )}
+                                          {el.selected_panel_length && (
+                                            <p className="m-0 p-0">
+                                              {" "}
+                                              Panel Length:{" "}
+                                              {el.selected_panel_length}
                                             </p>
                                           )}
                                           {el.product_variation && (
@@ -268,29 +292,35 @@ const OrderViewPage: React.FC = (props: any) => {
 
                               <div className="row my-2">
                                 <div className="col-6 offset-6">
-                                  
-                                <div className="col-md-12">
-			
-				<select
-					className="form-select"
-					
-					id="status"
-					name="status"
-					onChange={handleSelect}
-					value={order.status}>
-          <option value="Pending">Pending Payment</option>
-					<option value="Pending Payment">Pending Payment</option>
-          <option value="Processing">Processing</option>
-          <option value="On Hold">On Hold</option>
-          <option value="Completed">Completed</option>
-          <option value="Cancelled">Cancelled</option>
-          <option value="Refunded">Refunded</option>
-          <option value="Failed">Failed</option>
-          <option value="Draft">Draft</option>
-				</select>
-			
-			</div>
-                                  
+                                  <div className="col-md-12">
+                                    <select
+                                      className="form-select"
+                                      id="status"
+                                      name="status"
+                                      onChange={handleSelect}
+                                      value={order.status}
+                                    >
+                                      <option value="Pending">
+                                        Pending Payment
+                                      </option>
+                                      <option value="Pending Payment">
+                                        Pending Payment
+                                      </option>
+                                      <option value="Processing">
+                                        Processing
+                                      </option>
+                                      <option value="On Hold">On Hold</option>
+                                      <option value="Completed">
+                                        Completed
+                                      </option>
+                                      <option value="Cancelled">
+                                        Cancelled
+                                      </option>
+                                      <option value="Refunded">Refunded</option>
+                                      <option value="Failed">Failed</option>
+                                      <option value="Draft">Draft</option>
+                                    </select>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -330,7 +360,7 @@ const OrderViewPage: React.FC = (props: any) => {
                                   <small>${orderInfo.tax}</small>
                                 </div>
                               </div>
-                              {(!orderInfo.coupon) ? null : (
+                              {!orderInfo.coupon ? null : (
                                 <div className="row justify-content-between">
                                   <div className="col-4">
                                     <small> Coupon</small>
@@ -362,7 +392,7 @@ const OrderViewPage: React.FC = (props: any) => {
                                     {orderInfo.subTotal +
                                       orderInfo.tax +
                                       orderInfo.shipping -
-                                      (orderInfo.coupon?orderInfo.coupon:0)}
+                                      (orderInfo.coupon ? orderInfo.coupon : 0)}
                                   </small>
                                 </div>
                               </div>
